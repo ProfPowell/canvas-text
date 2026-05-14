@@ -45,7 +45,7 @@ test('canvas-text:error fires when render-tag throws', async ({ page }) => {
       el.addEventListener('canvas-text:rendered', () => res(null), { once: true });
     });
   });
-  if (detail) {
-    expect(detail.error).toBeDefined();
-  }
+  // render-tag throws on width=-1, so detail is always non-null and contains an error.
+  expect(detail).not.toBeNull();
+  expect(detail.error).toBeDefined();
 });

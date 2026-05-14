@@ -17,8 +17,7 @@ export class CanvasTextElement extends HTMLElement {
     return this.#numAttr('width', 600);
   }
   get height() {
-    const h = this.getAttribute('height');
-    return h == null ? null : Number(h);
+    return this.#numAttr('height', null);
   }
   get compose() {
     return this.getAttribute('compose') || 'slots';
@@ -32,7 +31,8 @@ export class CanvasTextElement extends HTMLElement {
   get dpr() {
     const v = this.getAttribute('dpr');
     if (v == null || v === 'auto') return window.devicePixelRatio || 1;
-    return Number(v) || 1;
+    const n = Number(v);
+    return Number.isFinite(n) && n > 0 ? n : 1;
   }
 
   #numAttr(name, fallback) {
