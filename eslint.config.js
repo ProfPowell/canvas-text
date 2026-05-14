@@ -3,6 +3,9 @@ import js from '@eslint/js';
 export default [
   js.configs.recommended,
   {
+    ignores: ['dist/', 'node_modules/', 'playwright-report/', 'test-results/'],
+  },
+  {
     languageOptions: {
       ecmaVersion: 'latest',
       sourceType: 'module',
@@ -20,11 +23,15 @@ export default [
         CustomEvent: 'readonly',
         Image: 'readonly',
         Blob: 'readonly',
-        URL: 'readonly'
-      }
+        URL: 'readonly',
+        performance: 'readonly',
+      },
     },
     rules: {
-      'no-unused-vars': ['warn', { argsIgnorePattern: '^_' }]
-    }
-  }
+      'no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+      'no-var': 'error',
+      'prefer-const': 'error',
+      'no-console': 'warn',
+    },
+  },
 ];
