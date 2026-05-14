@@ -35,11 +35,11 @@ when present) but stands alone — does not depend on VB at runtime.
 - Public methods: `getCanvas()`, `toBlob()`, `toDataURL()`.
 - TypeScript types and ESM-only distribution.
 - A11y: optional `alt`-style fallback DOM for screen readers.
+- Composition with images to make banners using slotted content.  The most obvious slot would be an image with a slot value of background maybe if we want to layer we can look for background-X where X is the number and you do a stack with background being the lowest slot and the others being stacked above numerically.
 
-**Out**
+**Maybe**
 - Image rendering (no `<img>` support — consumers composite externally;
   see `meme-maker-plan.md`).
-- Animation, scroll-driven render, view transitions.
 - Server-side / node usage in v1. (Pluggable canvas factory pattern keeps
   the door open for v2.)
 - Interactive editing (caret, selection). Render only.
