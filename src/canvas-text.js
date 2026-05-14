@@ -1,8 +1,16 @@
 import { render as renderTag } from 'render-tag';
 
+const OBSERVED = ['width', 'height', 'theme', 'lang', 'accuracy', 'dpr', 'format', 'compose', 'alt'];
+
 export class CanvasTextElement extends HTMLElement {
   #canvas = null;
   #renderToken = 0;
+  #rafHandle = 0;
+  #mo = null;
+
+  static get observedAttributes() {
+    return OBSERVED;
+  }
 
   connectedCallback() {
     if (!this.#canvas) {
@@ -10,7 +18,37 @@ export class CanvasTextElement extends HTMLElement {
       this.#canvas.setAttribute('aria-hidden', 'true');
       this.appendChild(this.#canvas);
     }
-    this.render();
+    this.#mo = new MutationObserver((records) => {
+      const meaningful = records.some(
+        (r) =>
+          !(
+            r.type === 'childList' &&
+            [...r.addedNodes, ...r.removedNodes].every((n) => n === this.#canvas)
+          )
+      );
+      if (meaningful) this.#schedule();
+    });
+    this.#mo.observe(this, { childList: true, subtree: true, characterData: true, attributes: false });
+    this.#schedule();
+  }
+
+  disconnectedCallback() {
+    this.#mo?.disconnect();
+    this.#mo = null;
+    if (this.#rafHandle) cancelAnimationFrame(this.#rafHandle);
+  }
+
+  attributeChangedCallback(name, oldVal, newVal) {
+    if (oldVal === newVal) return;
+    this.#schedule();
+  }
+
+  #schedule() {
+    if (this.#rafHandle) return;
+    this.#rafHandle = requestAnimationFrame(() => {
+      this.#rafHandle = 0;
+      this.render();
+    });
   }
 
   get width() {
