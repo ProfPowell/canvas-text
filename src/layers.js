@@ -44,7 +44,7 @@ export async function paintLayer(ctx, layer, opts, renderTag, host, themeMode, o
   try {
     if (layer.kind === 'image') {
       const img = layer.node;
-      if (!img.complete || img.naturalWidth === 0) {
+      if (!img.complete) {
         await new Promise((res, rej) => {
           img.addEventListener('load', res, { once: true });
           img.addEventListener(
@@ -53,6 +53,9 @@ export async function paintLayer(ctx, layer, opts, renderTag, host, themeMode, o
             { once: true }
           );
         });
+      }
+      if (img.naturalWidth === 0) {
+        throw new Error(`image load failed: ${img.src}`);
       }
       // img.decode() may reject on already-broken images; the load/error guard above
       // covers the broken case, so a rejection here is safe to swallow.
