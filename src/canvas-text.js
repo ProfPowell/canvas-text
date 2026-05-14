@@ -88,6 +88,51 @@ export class CanvasTextElement extends HTMLElement {
     return this.#canvas;
   }
 
+  get format() {
+    return this.getAttribute('format') || 'png';
+  }
+
+  #mimeFor(type) {
+    if (type) return type;
+    const f = this.format;
+    return f === 'jpeg' ? 'image/jpeg' : f === 'webp' ? 'image/webp' : 'image/png';
+  }
+
+  toDataURL(type, quality) {
+    return this.#canvas.toDataURL(this.#mimeFor(type), quality);
+  }
+
+  toBlob(type, quality) {
+    return new Promise((resolve, reject) => {
+      this.#canvas.toBlob(
+        (b) => (b ? resolve(b) : reject(new Error('canvas-text: toBlob returned null'))),
+        this.#mimeFor(type),
+        quality
+      );
+    });
+  }
+
+  set html(value) {
+    // Replace unslotted children only; preserve slotted layers and the internal canvas.
+    for (const child of [...this.childNodes]) {
+      if (child === this.#canvas) continue;
+      if (child.nodeType === 1 && child.hasAttribute('slot')) continue;
+      this.removeChild(child);
+    }
+    this.insertAdjacentHTML('afterbegin', String(value));
+  }
+
+  get html() {
+    const parts = [];
+    for (const child of this.childNodes) {
+      if (child === this.#canvas) continue;
+      if (child.nodeType === 1 && child.hasAttribute('slot')) continue;
+      if (child.nodeType === 1) parts.push(child.outerHTML);
+      else if (child.nodeType === 3) parts.push(child.textContent);
+    }
+    return parts.join('');
+  }
+
   async render() {
     const token = ++this.#renderToken;
     if (!this.#canvas) return;
