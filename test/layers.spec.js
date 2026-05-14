@@ -8,7 +8,8 @@ test('background, text-1, text-2 stack in z-order with text on top', async ({ pa
     el.setAttribute('height', '200');
     el.innerHTML = `
       <img slot="background" src="/test/fixtures/red-square.png" crossorigin="anonymous">
-      <div slot="text-1" style="text-align:center; font:bold 48px sans-serif; color:white;">HI</div>
+      <div slot="text-1" style="text-align:center; padding-top:60px;
+                          font-size:80px; font-weight:bold; color:white;">HI</div>
     `;
     document.getElementById('harness').appendChild(el);
     await new Promise((res) => el.addEventListener('canvas-text:rendered', res, { once: true }));

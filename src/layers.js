@@ -64,16 +64,17 @@ export async function paintLayer(ctx, layer, opts, renderTag, host, themeMode, o
       ctx.drawImage(img, 0, 0, width * dpr, height * dpr);
     } else {
       const themed = wrapWithTheme(layer.node.outerHTML, host, themeMode);
-      // Do not pass height to render-tag for text layers: let it compute natural
-      // content height. The result canvas is then stretched to fill the full
-      // destination area so the text scales to the composed canvas dimensions.
+      // Pass the full target height so CSS positioning inside the layer (e.g.
+      // `position:absolute; bottom:20px`) resolves against the composed canvas
+      // size. Draw at natural size — no stretching, which would distort text.
       const result = renderTag.render({
         html: themed,
         width,
+        height,
         pixelRatio: dpr,
         accuracy: opts.accuracy,
       });
-      ctx.drawImage(result.canvas, 0, 0, width * dpr, height * dpr);
+      ctx.drawImage(result.canvas, 0, 0);
     }
   } catch (error) {
     onError({ slot: layer.slot, error });
