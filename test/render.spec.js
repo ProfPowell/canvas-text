@@ -20,13 +20,16 @@ test('text-only render produces a non-blank canvas and fires rendered event', as
   expect(detail.height).toBeGreaterThan(0);
   expect(typeof detail.durationMs).toBe('number');
 
-  const blank = await page.evaluate(() => {
+  const hasPixels = await page.evaluate(() => {
     const c = document.querySelector('canvas-text canvas');
     const ctx = c.getContext('2d');
     const data = ctx.getImageData(0, 0, c.width, c.height).data;
-    return Array.from(data).every((v, i) => (i % 4 === 3 ? true : v === 0));
+    for (let i = 3; i < data.length; i += 4) {
+      if (data[i] !== 0) return true;
+    }
+    return false;
   });
-  expect(blank).toBe(false);
+  expect(hasPixels).toBe(true);
 });
 
 test('canvas-text:error fires when render-tag throws', async ({ page }) => {

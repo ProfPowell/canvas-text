@@ -83,8 +83,6 @@ export class CanvasTextElement extends HTMLElement {
 
     const ctx = this.#canvas.getContext('2d');
     ctx.clearRect(0, 0, this.#canvas.width, this.#canvas.height);
-    ctx.fillStyle = '#ffffff';
-    ctx.fillRect(0, 0, this.#canvas.width, this.#canvas.height);
     ctx.drawImage(layerCanvas, 0, 0, this.#canvas.width, this.#canvas.height);
 
     this.setAttribute('data-upgraded', '');
