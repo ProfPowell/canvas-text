@@ -35,7 +35,10 @@ export class CanvasTextElement extends HTMLElement {
   disconnectedCallback() {
     this.#mo?.disconnect();
     this.#mo = null;
-    if (this.#rafHandle) cancelAnimationFrame(this.#rafHandle);
+    if (this.#rafHandle) {
+      cancelAnimationFrame(this.#rafHandle);
+      this.#rafHandle = 0;
+    }
   }
 
   attributeChangedCallback(name, oldVal, newVal) {
@@ -85,6 +88,8 @@ export class CanvasTextElement extends HTMLElement {
 
   async render() {
     const token = ++this.#renderToken;
+    if (!this.#canvas) return;
+    if (!this.contains(this.#canvas)) this.appendChild(this.#canvas);
     const start = performance.now();
 
     const html = this.#readDefaultSlotHTML();

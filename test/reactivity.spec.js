@@ -41,7 +41,7 @@ test('rapid attribute mutations coalesce into one render', async ({ page }) => {
 
 test('mutating slotted text triggers re-render', async ({ page }) => {
   await page.goto('/test/test-page.html');
-  const ok = await page.evaluate(async () => {
+  const result = await page.evaluate(async () => {
     const el = document.createElement('canvas-text');
     el.setAttribute('compose', 'text-only');
     el.textContent = 'first';
@@ -51,8 +51,12 @@ test('mutating slotted text triggers re-render', async ({ page }) => {
     const renders = [];
     el.addEventListener('canvas-text:rendered', (e) => renders.push(e));
     el.textContent = 'second';
-    await new Promise((res) => setTimeout(res, 100));
-    return renders.length === 1;
+    await new Promise((res) => el.addEventListener('canvas-text:rendered', res, { once: true }));
+    return {
+      rendered: renders.length,
+      hasCanvas: !!el.querySelector(':scope > canvas'),
+    };
   });
-  expect(ok).toBe(true);
+  expect(result.rendered).toBe(1);
+  expect(result.hasCanvas).toBe(true);
 });
