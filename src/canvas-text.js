@@ -4,6 +4,27 @@ import { collectLayers, paintLayer, backgroundImageRatio } from './layers.js';
 
 const OBSERVED = ['width', 'height', 'theme', 'lang', 'accuracy', 'dpr', 'format', 'compose', 'alt'];
 
+let stylesInjected = false;
+function injectStyles() {
+  if (stylesInjected || typeof document === 'undefined') return;
+  stylesInjected = true;
+  const style = document.createElement('style');
+  style.dataset.canvasTextStyle = '';
+  style.textContent = `
+    canvas-text { display: inline-block; position: relative; }
+    canvas-text > :not(canvas) {
+      position: absolute !important;
+      clip-path: inset(50%) !important;
+      width: 1px !important;
+      height: 1px !important;
+      overflow: hidden !important;
+      white-space: nowrap !important;
+    }
+    canvas-text > canvas { display: block; position: relative; }
+  `;
+  document.head.appendChild(style);
+}
+
 export class CanvasTextElement extends HTMLElement {
   #canvas = null;
   #renderToken = 0;
@@ -15,6 +36,7 @@ export class CanvasTextElement extends HTMLElement {
   }
 
   connectedCallback() {
+    injectStyles();
     if (!this.#canvas) {
       this.#canvas = document.createElement('canvas');
       this.#canvas.setAttribute('aria-hidden', 'true');
@@ -203,6 +225,23 @@ export class CanvasTextElement extends HTMLElement {
     }
 
     if (token !== this.#renderToken) return;
+
+    // Sync alt → aria-label on canvas, and toggle aria-hidden on fallback children.
+    const alt = this.getAttribute('alt');
+    if (alt) {
+      this.#canvas.setAttribute('aria-label', alt);
+      for (const child of this.children) {
+        if (child === this.#canvas) continue;
+        child.setAttribute('aria-hidden', 'true');
+      }
+    } else {
+      this.#canvas.removeAttribute('aria-label');
+      for (const child of this.children) {
+        if (child === this.#canvas) continue;
+        child.removeAttribute('aria-hidden');
+      }
+    }
+
     this.setAttribute('data-upgraded', '');
     this.dispatchEvent(
       new CustomEvent('canvas-text:rendered', {
