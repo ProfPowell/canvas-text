@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>canvas-text meme demo</title>
+  <script type="importmap">
+    { "imports": { "render-tag": "https://esm.sh/render-tag@0.1.7" } }
+  </script>
+  <script type="module" src="../src/index.js"></script>
+  <style>
+    body { font: 16px system-ui; padding: 2rem; }
+    canvas-text { display: inline-block; }
+  </style>
+</head>
+<body>
+  <h1>meme demo</h1>
+  <canvas-text width="500" height="500" theme="none">
+    <img slot="background" src="../test/fixtures/red-square.png" crossorigin="anonymous">
+    <div slot="text-1" style="text-align:center; font:bold 48px Impact; color:white;
+                              -webkit-text-stroke:2px black; padding:20px 0;">
+      TOP TEXT
+    </div>
+    <div slot="text-2" style="position:absolute; left:0; right:0; bottom:20px;
+                              text-align:center; font:bold 48px Impact; color:white;
+                              -webkit-text-stroke:2px black;">
+      BOTTOM TEXT
+    </div>
+  </canvas-text>
+</body>
+</html>

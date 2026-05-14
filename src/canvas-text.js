@@ -1,5 +1,6 @@
 import * as renderTag from 'render-tag';
 import { wrapWithTheme } from './theme-bridge.js';
+import { collectLayers, paintLayer, backgroundImageRatio } from './layers.js';
 
 const OBSERVED = ['width', 'height', 'theme', 'lang', 'accuracy', 'dpr', 'format', 'compose', 'alt'];
 
@@ -93,50 +94,83 @@ export class CanvasTextElement extends HTMLElement {
     if (!this.contains(this.#canvas)) this.appendChild(this.#canvas);
     const start = performance.now();
 
-    const html = this.#readDefaultSlotHTML();
-    const width = this.width;
-
     // Yield to the microtask queue so callers can attach event listeners
     // before canvas-text:rendered fires (render-tag's render() is synchronous).
     await Promise.resolve();
     if (token !== this.#renderToken) return;
 
-    let result;
-    try {
-      // render-tag's render() is synchronous and returns { canvas, height, layoutRoot, lines }
-      const themeMode = this.getAttribute('theme') || 'inherit';
-      const themedHtml = wrapWithTheme(html, this, themeMode);
-      result = renderTag.render({
-        html: themedHtml,
-        width,
-        height: this.height ?? undefined,
-        accuracy: this.accuracy,
-        pixelRatio: this.dpr,
-      });
-    } catch (error) {
-      this.dispatchEvent(new CustomEvent('canvas-text:error', { detail: { error } }));
-      return;
+    const dpr = this.dpr;
+    const width = this.width;
+    const themeMode = this.getAttribute('theme') || 'inherit';
+
+    let height = this.height;
+    if (height == null) {
+      const ratio = await backgroundImageRatio(this);
+      if (token !== this.#renderToken) return;
+      if (ratio != null) height = width * ratio;
+    }
+
+    if (this.compose === 'text-only') {
+      const html = this.#readDefaultSlotHTML();
+      let result;
+      try {
+        // render-tag's render() is synchronous and returns { canvas, height, layoutRoot, lines }
+        const themed = wrapWithTheme(html, this, themeMode);
+        result = renderTag.render({
+          html: themed,
+          width,
+          height: height ?? undefined,
+          pixelRatio: dpr,
+          accuracy: this.accuracy,
+        });
+      } catch (error) {
+        this.dispatchEvent(new CustomEvent('canvas-text:error', { detail: { error } }));
+        return;
+      }
+      if (token !== this.#renderToken) return;
+      height = height ?? result.height / dpr;
+      this.#sizeCanvas(width, height, dpr);
+      const ctx = this.#canvas.getContext('2d');
+      ctx.clearRect(0, 0, this.#canvas.width, this.#canvas.height);
+      ctx.drawImage(result.canvas, 0, 0, this.#canvas.width, this.#canvas.height);
+    } else {
+      // Layer pipeline (compose='slots' or any unrecognized value).
+      const layers = collectLayers(this, this.#canvas);
+      if (height == null) height = width;
+      this.#sizeCanvas(width, height, dpr);
+      const ctx = this.#canvas.getContext('2d');
+      ctx.clearRect(0, 0, this.#canvas.width, this.#canvas.height);
+
+      const onError = (detail) =>
+        this.dispatchEvent(new CustomEvent('canvas-text:layer-error', { detail }));
+      for (const layer of layers) {
+        if (token !== this.#renderToken) return;
+        await paintLayer(
+          ctx,
+          layer,
+          { width, height, dpr, accuracy: this.accuracy },
+          renderTag,
+          this,
+          themeMode,
+          onError
+        );
+      }
     }
 
     if (token !== this.#renderToken) return;
-
-    const layerCanvas = result.canvas;
-    const height = this.height ?? result.height;
-    this.#canvas.width = Math.round(width * this.dpr);
-    this.#canvas.height = Math.round(height * this.dpr);
-    this.#canvas.style.width = `${width}px`;
-    this.#canvas.style.height = `${height}px`;
-
-    const ctx = this.#canvas.getContext('2d');
-    ctx.clearRect(0, 0, this.#canvas.width, this.#canvas.height);
-    ctx.drawImage(layerCanvas, 0, 0, this.#canvas.width, this.#canvas.height);
-
     this.setAttribute('data-upgraded', '');
     this.dispatchEvent(
       new CustomEvent('canvas-text:rendered', {
         detail: { width, height, durationMs: performance.now() - start },
       })
     );
+  }
+
+  #sizeCanvas(width, height, dpr) {
+    this.#canvas.width = Math.round(width * dpr);
+    this.#canvas.height = Math.round(height * dpr);
+    this.#canvas.style.width = `${width}px`;
+    this.#canvas.style.height = `${height}px`;
   }
 
   #readDefaultSlotHTML() {
