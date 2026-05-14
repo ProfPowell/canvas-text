@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>canvas-text playground</title>
+  <script type="importmap">
+    { "imports": { "render-tag": "https://esm.sh/render-tag@0.1.7" } }
+  </script>
+  <script type="module" src="../src/index.js"></script>
+  <style>
+    body { font: 16px system-ui; padding: 2rem; max-width: 60rem; }
+    section { margin-block: 2rem; }
+  </style>
+</head>
+<body>
+  <h1>canvas-text playground</h1>
+  <section>
+    <h2>text-only</h2>
+    <canvas-text width="500" compose="text-only">
+      <p>Hello, <strong>world</strong>!</p>
+    </canvas-text>
+  </section>
+  <section>
+    <h2>layered</h2>
+    <a href="./meme.html">see meme demo →</a>
+  </section>
+</body>
+</html>

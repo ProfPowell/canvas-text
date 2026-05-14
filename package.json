@@ -1,6 +1,6 @@
 {
   "name": "@profpowell/canvas-text",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Stand-alone web component that composites rich text and images onto a canvas",
   "type": "module",
   "main": "dist/canvas-text.js",

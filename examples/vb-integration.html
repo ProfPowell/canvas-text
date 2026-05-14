@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>canvas-text + Vanilla Breeze</title>
+  <link rel="stylesheet" href="https://unpkg.com/@profpowell/vanilla-breeze/dist/themes/light.css">
+  <script type="importmap">
+    { "imports": { "render-tag": "https://esm.sh/render-tag@0.1.7" } }
+  </script>
+  <script type="module" src="../src/index.js"></script>
+  <style>
+    body { font: 16px system-ui; padding: 2rem; }
+  </style>
+</head>
+<body>
+  <h1>VB integration</h1>
+  <p>The element below inherits VB tokens through <code>theme="inherit"</code>.</p>
+  <canvas-text width="500" theme="inherit" compose="text-only">
+    <p>I should match my surrounding type.</p>
+  </canvas-text>
+</body>
+</html>
