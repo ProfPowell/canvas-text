@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>API Reference - canvas-text Web Component</title>
+  <meta name="description" content="Complete API documentation for the canvas-text web component">
+  <link rel="stylesheet" href="./styles.css">
+  <script type="importmap">
+    { "imports": { "render-tag": "https://esm.sh/render-tag@0.1.7" } }
+  </script>
+  <script type="module" src="./dist/canvas-text.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <nav>
+      <a href="index.html" class="nav-brand">&lt;canvas-text&gt;</a>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="demos.html">Demos</a>
+        <a href="api.html" class="active">API</a>
+        <a href="https://github.com/ProfPowell/canvas-text">GitHub</a>
+        <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme">&#127763;</button>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <h1>API Reference</h1>
+    <p class="demo-description">Complete documentation for the <code>&lt;canvas-text&gt;</code> custom element.</p>
+
+    <!-- ELEMENT OVERVIEW -->
+    <section>
+      <h2>Element Overview</h2>
+      <p><code>&lt;canvas-text&gt;</code> composites z-ordered image and text layers onto an internal <code>&lt;canvas&gt;</code>. Text layers are rasterized via <a href="https://www.npmjs.com/package/render-tag">render-tag</a>; image layers are drawn with <code>ctx.drawImage</code>. The element owns the canvas; consumers interact through slots, attributes, properties, and methods.</p>
+      <p>The element is light-DOM only — no Shadow DOM. Slotted HTML remains accessible to screen readers. See <a href="#accessibility">Accessibility</a>.</p>
+      <p>Install: <code>npm install @profpowell/canvas-text render-tag</code></p>
+    </section>
+
+    <!-- SLOT GRAMMAR -->
+    <section>
+      <h2>Slot Grammar</h2>
+      <p>Children are identified by their <code>slot</code> attribute. Each slot maps to a z-order position in the composite stack. See <a href="demos.html#layered">Layered demo</a> and <a href="demos.html#z-order">Z-order demo</a>.</p>
+
+      <table class="api-table">
+        <thead>
+          <tr>
+            <th>Slot</th>
+            <th>Type</th>
+            <th>z-order</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>background</code></td>
+            <td>image (<code>&lt;img&gt;</code>)</td>
+            <td>0</td>
+            <td>Bottom of the stack. Height auto-derives from this image's aspect ratio when <code>height</code> is omitted.</td>
+          </tr>
+          <tr>
+            <td><code>background-N</code></td>
+            <td>image (<code>&lt;img&gt;</code>)</td>
+            <td>N (integer)</td>
+            <td>Integer suffix; higher N paints above lower N.</td>
+          </tr>
+          <tr>
+            <td><code>text-N</code></td>
+            <td>rich HTML</td>
+            <td>N (integer)</td>
+            <td>Rendered above <code>background-N</code> at the same N. Use <code>padding-top</code> for vertical placement — <code>position:absolute</code> is not supported by render-tag.</td>
+          </tr>
+          <tr>
+            <td><em>(no slot=, default slot)</em></td>
+            <td>rich HTML</td>
+            <td>&infin;</td>
+            <td>Always painted last, on top of all other layers. Also used by <code>compose="text-only"</code>.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p><strong>Tie-breaking:</strong> At the same N, the image (<code>background-N</code>) paints before the text (<code>text-N</code>).</p>
+      <p><strong>Image layers:</strong> The element calls <code>img.decode()</code> before drawing. Add <code>crossorigin="anonymous"</code> on <code>&lt;img&gt;</code> elements served from CORS-enabled origins, otherwise <code>toBlob()</code> / <code>toDataURL()</code> will throw a tainted-canvas error.</p>
+    </section>
+
+    <!-- ATTRIBUTES -->
+    <section>
+      <h2>Attributes</h2>
+      <p>All attributes are observed; mutations trigger a coalesced re-render.</p>
+
+      <table class="api-table">
+        <thead>
+          <tr>
+            <th>Attribute</th>
+            <th>Type</th>
+            <th>Default</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>width</code></td>
+            <td>number</td>
+            <td><code>600</code></td>
+            <td>Canvas width in CSS pixels.</td>
+          </tr>
+          <tr>
+            <td><code>height</code></td>
+            <td>number</td>
+            <td><em>auto</em></td>
+            <td>Canvas height in CSS pixels. If omitted and a <code>background</code> image is present, height is derived from the image's intrinsic aspect ratio. Otherwise auto from text layout.</td>
+          </tr>
+          <tr>
+            <td><code>theme</code></td>
+            <td><code>"inherit"</code> | <code>"none"</code> | <code>"inline"</code></td>
+            <td><code>"inherit"</code></td>
+            <td>Theme bridge mode. See <a href="#theme-bridge">Theme Bridge</a>.</td>
+          </tr>
+          <tr>
+            <td><code>compose</code></td>
+            <td><code>"slots"</code> | <code>"text-only"</code></td>
+            <td><code>"slots"</code></td>
+            <td><code>"slots"</code> runs the full layer pipeline. <code>"text-only"</code> skips slot scanning and renders the default-slot HTML as a single text layer — simpler and faster for plain text.</td>
+          </tr>
+          <tr>
+            <td><code>format</code></td>
+            <td><code>"png"</code> | <code>"jpeg"</code> | <code>"webp"</code></td>
+            <td><code>"png"</code></td>
+            <td>Default MIME type used by <code>toBlob()</code> and <code>toDataURL()</code> when called without an explicit <code>type</code> argument.</td>
+          </tr>
+          <tr>
+            <td><code>dpr</code></td>
+            <td>number | <code>"auto"</code></td>
+            <td><code>"auto"</code></td>
+            <td>Device pixel ratio. <code>"auto"</code> reads <code>window.devicePixelRatio</code>. Override to a fixed value (e.g. <code>"2"</code>) for consistent output regardless of screen.</td>
+          </tr>
+          <tr>
+            <td><code>accuracy</code></td>
+            <td><code>"default"</code> | <code>"balanced"</code></td>
+            <td><code>"default"</code></td>
+            <td>Passed through to render-tag. <code>"balanced"</code> trades some speed for improved layout accuracy.</td>
+          </tr>
+          <tr>
+            <td><code>lang</code></td>
+            <td>string</td>
+            <td>host <code>lang</code></td>
+            <td>Reserved for future bidi/CJK hints. Currently forwarded to render-tag but not processed.</td>
+          </tr>
+          <tr>
+            <td><code>alt</code></td>
+            <td>string</td>
+            <td>—</td>
+            <td>Plain-text description. Applied as <code>aria-label</code> on the canvas and suppresses the visually-hidden fallback DOM so AT reads the <code>alt</code> only.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- PROPERTIES -->
+    <section>
+      <h2>Properties</h2>
+
+      <table class="api-table">
+        <thead>
+          <tr>
+            <th>Property</th>
+            <th>Type</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>html</code> (setter)</td>
+            <td>string</td>
+            <td>Replaces the host's unslotted (default-slot) children with the provided HTML string. Slotted layers (<code>background</code>, <code>text-N</code>) are untouched. Setting this property triggers a render.</td>
+          </tr>
+          <tr>
+            <td><code>html</code> (getter)</td>
+            <td>string</td>
+            <td>Serialized HTML of the current unslotted children.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Usage</h3>
+      <pre><code>const el = document.querySelector('canvas-text');
+
+// Set content imperatively
+el.html = '&lt;strong&gt;Updated!&lt;/strong&gt;';
+
+// Read current unslotted HTML
+console.log(el.html);</code></pre>
+    </section>
+
+    <!-- METHODS -->
+    <section>
+      <h2>Methods</h2>
+
+      <table class="api-table">
+        <thead>
+          <tr>
+            <th>Method</th>
+            <th>Signature</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>getCanvas()</code></td>
+            <td><code>() =&gt; HTMLCanvasElement | null</code></td>
+            <td>Returns the internal canvas element. Returns <code>null</code> before the element is connected to the DOM.</td>
+          </tr>
+          <tr>
+            <td><code>toDataURL()</code></td>
+            <td><code>(type?: string, quality?: number) =&gt; string</code></td>
+            <td>Synchronous export. Returns a base64-encoded data URL. Reflects the last completed render — call <code>await el.render()</code> first if you need fresh pixels after a mutation.</td>
+          </tr>
+          <tr>
+            <td><code>toBlob()</code></td>
+            <td><code>(type?: string, quality?: number) =&gt; Promise&lt;Blob&gt;</code></td>
+            <td>Async export. Same pixel source as <code>toDataURL()</code>. Preferred for large images (avoids holding base64 in memory). See <a href="demos.html#export">Export demo</a>.</td>
+          </tr>
+          <tr>
+            <td><code>render()</code></td>
+            <td><code>() =&gt; Promise&lt;void&gt;</code></td>
+            <td>Force a render; resolves after paint. Async because image layers must <code>decode()</code> before drawing. Useful in tests and after imperative mutations.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Notes</h3>
+      <p>Both <code>toDataURL()</code> and <code>toBlob()</code> reflect the canvas as of the last completed render. If you have just mutated attributes or slots:</p>
+      <pre><code>// Wait for the next render before exporting
+await el.render();
+const blob = await el.toBlob('image/png');</code></pre>
+      <p>Cross-origin images without <code>crossorigin="anonymous"</code> will taint the canvas and cause <code>toBlob()</code> / <code>toDataURL()</code> to throw. The <code>canvas-text:layer-error</code> event fires for per-layer failures.</p>
+    </section>
+
+    <!-- EVENTS -->
+    <section>
+      <h2>Events</h2>
+      <p>All events bubble and are dispatched on the <code>&lt;canvas-text&gt;</code> element.</p>
+
+      <table class="api-table">
+        <thead>
+          <tr>
+            <th>Event</th>
+            <th>Detail payload</th>
+            <th>When</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>canvas-text:rendered</code></td>
+            <td><code>{ width: number, height: number, durationMs: number }</code></td>
+            <td>After each successful render cycle completes. <code>durationMs</code> is wall-clock time including image decode.</td>
+          </tr>
+          <tr>
+            <td><code>canvas-text:error</code></td>
+            <td><code>{ error: Error }</code></td>
+            <td>Render aborted — e.g. render-tag throws on every text layer. Composition did not produce output.</td>
+          </tr>
+          <tr>
+            <td><code>canvas-text:layer-error</code></td>
+            <td><code>{ slot: string, error: Error }</code></td>
+            <td>A single layer failed (e.g. broken image, render-tag error on one layer). Composition continues with the remaining layers. <code>slot</code> is the slot name of the failing layer.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Usage</h3>
+      <pre><code>const el = document.querySelector('canvas-text');
+
+el.addEventListener('canvas-text:rendered', ({ detail }) =&gt; {
+  console.log(`Rendered ${detail.width}x${detail.height} in ${detail.durationMs}ms`);
+});
+
+el.addEventListener('canvas-text:layer-error', ({ detail }) =&gt; {
+  console.warn(`Layer "${detail.slot}" failed:`, detail.error);
+});</code></pre>
+    </section>
+
+    <!-- THEME BRIDGE -->
+    <section id="theme-bridge">
+      <h2>Theme Bridge</h2>
+      <p>When <code>theme="inherit"</code> (default), the element reads a small allowlist of computed CSS properties from the host element and inlines them on each text layer before it is passed to render-tag. This lets Vanilla Breeze themes (or any tokenized CSS system) automatically flow into the rasterized output.</p>
+
+      <p>The bridge runs once per render. Theme changes after first render are not re-applied in v0.1 — re-render is triggered by attribute/slot mutations, not by CSS changes.</p>
+
+      <h3>Allowlist</h3>
+      <table class="api-table">
+        <thead>
+          <tr>
+            <th>CSS property</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><code>color</code></td><td>Text color.</td></tr>
+          <tr><td><code>font-family</code></td><td>Longhand only — <code>font:</code> shorthand is not parsed by render-tag.</td></tr>
+          <tr><td><code>font-size</code></td><td></td></tr>
+          <tr><td><code>font-weight</code></td><td></td></tr>
+          <tr><td><code>font-style</code></td><td></td></tr>
+          <tr><td><code>line-height</code></td><td></td></tr>
+          <tr><td><code>letter-spacing</code></td><td></td></tr>
+          <tr><td><code>text-align</code></td><td></td></tr>
+          <tr><td><code>background-color</code></td><td></td></tr>
+        </tbody>
+      </table>
+
+      <h3>Modes</h3>
+      <table class="api-table">
+        <thead>
+          <tr>
+            <th>Value</th>
+            <th>Behavior</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>theme="inherit"</code> (default)</td>
+            <td>Copy allowlist from <code>getComputedStyle(host)</code>. Inline as a wrapper <code>style=</code> around each text layer's HTML before render-tag.</td>
+          </tr>
+          <tr>
+            <td><code>theme="none"</code></td>
+            <td>Pass layers to render-tag with its built-in defaults only. No styles from the host.</td>
+          </tr>
+          <tr>
+            <td><code>theme="inline"</code></td>
+            <td>Assume the author has already inlined all styles on the slotted HTML. Pass through unchanged.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>See <a href="demos.html#theme-bridge">Theme Bridge demo</a> for a side-by-side comparison.</p>
+    </section>
+
+    <!-- CSS SUPPORT -->
+    <section id="css-support">
+      <h2>CSS Support Inside Layers</h2>
+      <p>Text layers are rasterized by render-tag, which implements a <strong>limited CSS surface</strong> — it is a layout/raster engine, not a full browser. Authors who try to use unsupported properties will get no effect or unexpected layout.</p>
+
+      <h3>Supported</h3>
+      <table class="api-table">
+        <thead>
+          <tr><th>Property</th><th>Notes</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>color</code></td><td></td></tr>
+          <tr><td><code>background-color</code></td><td></td></tr>
+          <tr><td><code>font-family</code></td><td>Longhand. Web fonts must be loaded before render.</td></tr>
+          <tr><td><code>font-size</code></td><td></td></tr>
+          <tr><td><code>font-weight</code></td><td></td></tr>
+          <tr><td><code>font-style</code></td><td></td></tr>
+          <tr><td><code>line-height</code></td><td></td></tr>
+          <tr><td><code>letter-spacing</code></td><td></td></tr>
+          <tr><td><code>text-align</code></td><td></td></tr>
+          <tr><td><code>padding</code> / <code>margin</code></td><td>Use <code>padding-top</code> for vertical positioning.</td></tr>
+          <tr><td><code>border</code></td><td>Basic block borders.</td></tr>
+          <tr><td><code>-webkit-text-stroke</code></td><td>Text stroke width and color.</td></tr>
+          <tr><td>Basic block flow</td><td>Block and inline elements, normal flow.</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Not Supported</h3>
+      <table class="api-table">
+        <thead>
+          <tr><th>Property</th><th>Workaround</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>position</code>, <code>top</code> / <code>right</code> / <code>bottom</code> / <code>left</code>, <code>inset</code></td>
+            <td>Use <code>padding-top</code> / <code>padding-left</code> to offset text within the full-canvas layer box.</td>
+          </tr>
+          <tr>
+            <td>Flexbox (<code>display:flex</code>, <code>align-items</code>, <code>justify-content</code>)</td>
+            <td>Use block flow with padding.</td>
+          </tr>
+          <tr>
+            <td>CSS Grid</td>
+            <td>Use block flow with padding.</td>
+          </tr>
+          <tr>
+            <td>CSS transforms (<code>transform</code>, <code>rotate</code>, etc.)</td>
+            <td>Not available.</td>
+          </tr>
+          <tr>
+            <td>CSS custom properties (<code>var(--x)</code>) inside layer HTML</td>
+            <td>Resolve values before setting them on the slotted element — render-tag does not resolve CSS variables.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>font: shorthand caveat</h3>
+      <p>The <code>font:</code> shorthand (e.g. <code>font: bold 48px Impact</code>) is <strong>not parsed</strong> by render-tag. Use the longhands <code>font-size</code>, <code>font-weight</code>, and <code>font-family</code> separately:</p>
+      <pre><code>&lt;!-- Wrong: shorthand silently fails --&gt;
+&lt;div style="font: bold 48px Impact;"&gt;TEXT&lt;/div&gt;
+
+&lt;!-- Correct: use longhands --&gt;
+&lt;div style="font-size: 48px; font-weight: bold; font-family: Impact, sans-serif;"&gt;TEXT&lt;/div&gt;</code></pre>
+    </section>
+
+    <!-- ACCESSIBILITY -->
+    <section id="accessibility">
+      <h2>Accessibility</h2>
+      <p>The slotted HTML stays in the light DOM, visually hidden via <code>clip-path: inset(50%)</code>, so screen readers consume it as normal HTML. The canvas element is marked <code>aria-hidden="true"</code>.</p>
+
+      <h3>Behavior with and without alt</h3>
+      <table class="api-table">
+        <thead>
+          <tr><th>alt set?</th><th>AT behavior</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>No (default)</td>
+            <td>Slotted children are AT-readable as normal light DOM. Canvas is <code>aria-hidden</code>. Background <code>&lt;img&gt;</code> alt values are also available.</td>
+          </tr>
+          <tr>
+            <td>Yes</td>
+            <td>Canvas gets <code>aria-label</code> set to the <code>alt</code> value. The visually-hidden fallback is suppressed so AT reads the <code>alt</code> string only — no double announcement.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>See <a href="demos.html#a11y">Accessibility demo</a>. Axe-core must pass clean against all shipped examples.</p>
+    </section>
+
+    <!-- KNOWN LIMITATIONS -->
+    <section>
+      <h2>Known Limitations (v0.1)</h2>
+      <ul>
+        <li><strong>Cross-origin images:</strong> Without <code>crossorigin="anonymous"</code>, images will taint the canvas; <code>toBlob()</code> / <code>toDataURL()</code> will throw. Serve images from a CORS-enabled origin.</li>
+        <li><strong>Theme re-render:</strong> Theme changes after first render are not re-observed. Mutate an attribute or slot to force a re-render with the new theme.</li>
+        <li><strong>No SSR / node-canvas:</strong> The element requires a browser environment with <code>HTMLCanvasElement</code>.</li>
+        <li><strong>No interactive editing:</strong> No caret, text selection, or cursor support.</li>
+        <li><strong>render-tag CSS surface:</strong> See <a href="#css-support">CSS Support Inside Layers</a> — position, flex, grid, transforms, and CSS variables are not supported inside layer HTML.</li>
+        <li><strong>render-tag version:</strong> Pinned to <code>^0.1.7</code>. <code>render-tag</code> is pre-1.0; API may change.</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>MIT License &middot; <a href="https://github.com/ProfPowell/canvas-text">View on GitHub</a> &middot; Powered by <a href="https://www.npmjs.com/package/render-tag">render-tag</a></p>
+  </footer>
+
+  <script>
+    function toggleTheme() {
+      document.body.classList.toggle('dark');
+      localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
+    }
+
+    if (localStorage.getItem('theme') === 'dark') {
+      document.body.classList.add('dark');
+    }
+  </script>
+</body>
+</html>
