@@ -1,4 +1,5 @@
-import { render as renderTag } from 'render-tag';
+import * as renderTag from 'render-tag';
+import { wrapWithTheme } from './theme-bridge.js';
 
 const OBSERVED = ['width', 'height', 'theme', 'lang', 'accuracy', 'dpr', 'format', 'compose', 'alt'];
 
@@ -103,8 +104,10 @@ export class CanvasTextElement extends HTMLElement {
     let result;
     try {
       // render-tag's render() is synchronous and returns { canvas, height, layoutRoot, lines }
-      result = renderTag({
-        html,
+      const themeMode = this.getAttribute('theme') || 'inherit';
+      const themedHtml = wrapWithTheme(html, this, themeMode);
+      result = renderTag.render({
+        html: themedHtml,
         width,
         height: this.height ?? undefined,
         accuracy: this.accuracy,
