@@ -65,7 +65,7 @@ grammar:
 | `background`          | image       | 0            |
 | `background-<N>`      | image       | N (integer)  |
 | `text-<N>`            | rich text   | N (integer)  |
-| *(default, no slot=)* | rich text   | `Infinity`   |
+| *(default, no slot=)* | rich text   | `Infinity` (paints last, on top) |
 
 **Z-stack algorithm:**
 
@@ -138,8 +138,10 @@ open question #1).
 ### Properties
 
 ```ts
-html: string;           // setter: replaces default-slot innerHTML, triggers render
-                        // getter: returns current default-slot innerHTML
+html: string;           // setter: replaces the host's unslotted (default-slot)
+                        //         children. Slotted layers (background, text-N)
+                        //         are untouched. Triggers a render.
+                        // getter: serialized HTML of current unslotted children.
 ```
 
 ### Methods
@@ -150,6 +152,11 @@ toBlob(type?: string, quality?: number): Promise<Blob>;
 toDataURL(type?: string, quality?: number): string;
 render(): Promise<void>;  // async because image layers must decode first
 ```
+
+`getCanvas` and `toDataURL` reflect the canvas as of the last completed
+render. If the consumer has just mutated attributes or slots and needs the
+new pixels, they must `await el.render()` (or wait for `canvas-text:rendered`)
+before reading.
 
 ### Events
 
