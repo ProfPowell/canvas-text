@@ -1,6 +1,6 @@
 export declare class CanvasTextElement extends HTMLElement {
   width: number;
-  height: number;
+  height: number | null;
   theme: 'inherit' | 'none' | 'inline';
   accuracy: 'default' | 'balanced';
   lang: string;

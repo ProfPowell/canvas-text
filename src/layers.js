@@ -17,6 +17,11 @@ export function collectLayers(host, internalCanvas) {
     const m = SLOT_RE.exec(slot);
     if (!m) continue;
     const [, kind, n] = m;
+    if (kind === 'text' && !n) {
+      // `slot="text"` (without -N) is ambiguous. Skip with a warning.
+      console.warn(`canvas-text: slot="text" requires a number suffix (text-1, text-2, ...). Got slot="${slot}"; layer ignored.`);
+      continue;
+    }
     const z = kind === 'background' ? (n ? Number(n) : 0) : Number(n);
     if (kind === 'background') {
       const img = child.tagName === 'IMG' ? child : child.querySelector('img');

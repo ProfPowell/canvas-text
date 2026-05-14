@@ -46,13 +46,20 @@ export class CanvasTextElement extends HTMLElement {
       const meaningful = records.some(
         (r) =>
           !(
-            r.type === 'childList' &&
-            [...r.addedNodes, ...r.removedNodes].every((n) => n === this.#canvas)
+            (r.type === 'childList' &&
+              [...r.addedNodes, ...r.removedNodes].every((n) => n === this.#canvas)) ||
+            (r.type === 'attributes' && r.target === this.#canvas)
           )
       );
       if (meaningful) this.#schedule();
     });
-    this.#mo.observe(this, { childList: true, subtree: true, characterData: true, attributes: false });
+    this.#mo.observe(this, {
+      childList: true,
+      subtree: true,
+      characterData: true,
+      attributes: true,
+      attributeFilter: ['src', 'slot', 'style', 'class', 'srcset', 'crossorigin'],
+    });
     this.#schedule();
   }
 

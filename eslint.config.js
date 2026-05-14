@@ -25,6 +25,7 @@ export default [
         Blob: 'readonly',
         URL: 'readonly',
         performance: 'readonly',
+        console: 'readonly',
       },
     },
     rules: {
