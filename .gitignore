@@ -9,3 +9,4 @@ playwright-report
 .dolt/
 *.db
 .beads-credential-key
+.investigation/

@@ -71,7 +71,7 @@ export async function paintLayer(ctx, layer, opts, renderTag, host, themeMode, o
       }
       ctx.drawImage(img, 0, 0, width * dpr, height * dpr);
     } else {
-      const themed = wrapWithTheme(layer.node.outerHTML, host, themeMode);
+      const themed = wrapWithTheme(layer.node.outerHTML, host, themeMode, layer.node);
       // Pass the full target height so CSS positioning inside the layer (e.g.
       // `position:absolute; bottom:20px`) resolves against the composed canvas
       // size. Draw at natural size — no stretching, which would distort text.
