@@ -56,7 +56,7 @@
 
       <h3>Live Demo</h3>
       <div class="canvas-text-frame">
-        <canvas-text width="500" height="500">
+        <canvas-text width="500" height="500" theme="none">
           <img slot="background" src="./test/fixtures/red-square.png" crossorigin="anonymous" alt="Red background">
           <div slot="text-1" style="text-align:center; font-size:52px; font-weight:bold; color:white; -webkit-text-stroke:2px black; padding-top:24px;">
             TOP TEXT
@@ -68,7 +68,7 @@
       </div>
 
       <h3>Source</h3>
-      <pre><code>&lt;canvas-text width="500" height="500"&gt;
+      <pre><code>&lt;canvas-text width="500" height="500" theme="none"&gt;
   &lt;img slot="background" src="./test/fixtures/red-square.png"
        crossorigin="anonymous" alt="Red background"&gt;
   &lt;div slot="text-1"
@@ -86,6 +86,8 @@
 &lt;/canvas-text&gt;</code></pre>
 
       <p class="demo-description">Use <code>padding-top</code> for vertical placement of bottom text — <code>position:absolute</code> is not supported by render-tag. See <a href="api.html#css-support">CSS support</a> for the full list.</p>
+
+      <p class="demo-description"><strong>Why <code>theme="none"</code>?</strong> When you fully style your text layers (color, font-size, stroke) the default <code>theme="inherit"</code> can introduce a stroke/fill misalignment artifact. For tightly-styled meme text, <code>theme="none"</code> hands render-tag the raw markup with no inherited wrapper.</p>
     </section>
 
     <!-- Z-ORDER -->
@@ -95,7 +97,7 @@
 
       <h3>Live Demo</h3>
       <div class="canvas-text-frame">
-        <canvas-text width="400" height="400">
+        <canvas-text width="400" height="400" theme="none">
           <img slot="background-1" src="./test/fixtures/red-square.png" crossorigin="anonymous" alt="Red background at z=1">
           <img slot="background-2" src="./test/fixtures/blue-square.png" crossorigin="anonymous" alt="Blue square at z=2" style="width:200px; height:200px;">
           <div slot="text-3" style="text-align:center; font-size:32px; font-weight:bold; color:white; -webkit-text-stroke:1px black; padding-top:160px;">
@@ -105,7 +107,7 @@
       </div>
 
       <h3>Source</h3>
-      <pre><code>&lt;canvas-text width="400" height="400"&gt;
+      <pre><code>&lt;canvas-text width="400" height="400" theme="none"&gt;
   &lt;!-- z=1: full red background --&gt;
   &lt;img slot="background-1" src="./test/fixtures/red-square.png"
        crossorigin="anonymous" alt="Red background at z=1"&gt;
@@ -284,7 +286,7 @@
       </div>
 
       <div class="canvas-text-frame">
-        <canvas-text id="dynamic-demo" width="500" height="200">
+        <canvas-text id="dynamic-demo" width="500" height="200" theme="none">
           <img id="dynamic-bg-img" slot="background" src="./test/fixtures/red-square.png" crossorigin="anonymous" alt="">
           <div id="dynamic-text-layer" slot="text-1" style="padding: 60px 32px; font-size: 36px; font-weight: bold; text-align: center; color: white; -webkit-text-stroke: 1px black;">
             Hello, canvas-text!
@@ -300,7 +302,7 @@
   &lt;option value="none"&gt;None&lt;/option&gt;
 &lt;/select&gt;
 
-&lt;canvas-text id="dynamic-demo" width="500" height="200"&gt;
+&lt;canvas-text id="dynamic-demo" width="500" height="200" theme="none"&gt;
   &lt;img id="dynamic-bg-img" slot="background"
        src="./test/fixtures/red-square.png" crossorigin="anonymous" alt=""&gt;
   &lt;div id="dynamic-text-layer" slot="text-1"

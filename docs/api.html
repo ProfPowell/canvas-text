@@ -425,6 +425,51 @@ el.addEventListener('canvas-text:layer-error', ({ detail }) =&gt; {
       <p>See <a href="demos.html#a11y">Accessibility demo</a>. Axe-core must pass clean against all shipped examples.</p>
     </section>
 
+    <!-- GOTCHAS -->
+    <section id="gotchas">
+      <h2>Gotchas</h2>
+      <p>Pragmatic notes about real interactions between <code>render-tag</code>, the theme bridge, and common authoring patterns. Read this before opening an issue.</p>
+
+      <h3 id="gotcha-theme-stroke"><code>theme="inherit"</code> can mis-align <code>-webkit-text-stroke</code></h3>
+      <p>The default theme bridge wraps each text layer in an outer <code>&lt;div style="..."&gt;</code> carrying the host element's computed styles (color, font, etc.). When the slotted layer itself fully declares its own typographic styling <em>and</em> uses <code>-webkit-text-stroke</code>, the nested CSS context can disrupt render-tag's stroke/fill path rendering. The visible symptom is a thin slash through glyphs with closed bowls or crossing strokes — <strong>P, B, M, X</strong> are the usual victims.</p>
+
+      <p><strong>Workaround:</strong> set <code>theme="none"</code> on tightly-styled meme-style text layers. Use <code>theme="inherit"</code> when you want the canvas to pick up the surrounding design tokens; use <code>theme="none"</code> when every layer is fully self-styled.</p>
+
+      <table class="api-table">
+        <thead>
+          <tr><th>When to use</th><th>Mode</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Plain rich text that should look like the surrounding page (default)</td>
+            <td><code>theme="inherit"</code> — the default</td>
+          </tr>
+          <tr>
+            <td>Meme/OG-card text with explicit <code>color</code>, <code>font-*</code>, and <code>-webkit-text-stroke</code></td>
+            <td><code>theme="none"</code></td>
+          </tr>
+          <tr>
+            <td>You've already inlined the styles you want on the slotted HTML and don't want any further wrapping</td>
+            <td><code>theme="inline"</code></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>A future minor release may auto-detect this case and skip the wrapper when the layer already declares its own typographic surface.</p>
+
+      <h3 id="gotcha-position"><code>position: absolute</code> doesn't work inside layers</h3>
+      <p><code>render-tag</code> is a layout/raster engine, not a full browser. <code>position</code>, <code>top</code>/<code>right</code>/<code>bottom</code>/<code>left</code>, <code>inset</code>, and flexbox alignment are not honored inside a layer's HTML. For vertical placement, use <code>padding-top</code> against the full canvas height. See <a href="#css-support">CSS Support Inside Layers</a>.</p>
+
+      <h3 id="gotcha-font-shorthand"><code>font:</code> shorthand is not parsed</h3>
+      <p>Use <code>font-size</code>, <code>font-weight</code>, <code>font-family</code> as individual longhand declarations. The shorthand form is silently ignored by render-tag.</p>
+
+      <h3 id="gotcha-cors">Cross-origin images taint the canvas</h3>
+      <p>Set <code>crossorigin="anonymous"</code> on any <code>&lt;img&gt;</code> you intend to composite, and serve the image from a CORS-enabled origin. Without it, <code>toBlob()</code> / <code>toDataURL()</code> will throw a <code>SecurityError</code> at export time.</p>
+
+      <h3 id="gotcha-export-timing">Export reflects the <em>last completed</em> render</h3>
+      <p><code>toDataURL</code> is synchronous; <code>toBlob</code> is async. Both read the current canvas pixels. If you've just mutated attributes or slots, the next render is queued on the upcoming animation frame — you need to <code>await el.render()</code> (or listen for <code>canvas-text:rendered</code>) before reading.</p>
+    </section>
+
     <!-- KNOWN LIMITATIONS -->
     <section>
       <h2>Known Limitations (v0.1)</h2>

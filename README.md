@@ -5,7 +5,7 @@
 [![npm](https://img.shields.io/npm/v/@profpowell/canvas-text.svg)](https://www.npmjs.com/package/@profpowell/canvas-text) **·** MIT **·** [Docs & Demos](https://profpowell.github.io/canvas-text/) **·** [API](https://profpowell.github.io/canvas-text/api.html)
 
 ```html
-<canvas-text width="500" height="500">
+<canvas-text width="500" height="500" theme="none">
   <img slot="background" src="doge.jpg" crossorigin="anonymous">
   <div slot="text-1" style="text-align:center; font-size:48px; font-weight:bold;
                             color:white; -webkit-text-stroke:2px black;
@@ -21,6 +21,8 @@
 ```
 
 That's it — drop the element in, it composites a real canvas you can export to PNG/JPEG/WebP. No build step, no framework, no shadow DOM, no canvas API to learn.
+
+> **Why `theme="none"` for meme-style text?** When every text layer fully declares its own color/font/stroke, the default `theme="inherit"` wrapper can mis-align `-webkit-text-stroke` paths on glyphs with closed bowls or crossings (P, B, M, X). For tightly-styled overlays, opt out of inheritance. See [Gotchas](https://profpowell.github.io/canvas-text/api.html#gotchas).
 
 ## Why this component?
 
