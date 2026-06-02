@@ -32,7 +32,7 @@ export default [
       'no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
       'no-var': 'error',
       'prefer-const': 'error',
-      'no-console': 'warn',
+      'no-console': ['warn', { allow: ['warn', 'error'] }],
     },
   },
 ];

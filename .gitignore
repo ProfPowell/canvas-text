@@ -5,6 +5,10 @@ playwright-report
 .DS_Store
 *.tgz
 
+# Editor / tooling
+.idea/
+.playwright-mcp/
+
 # Beads / Dolt files (added by bd init)
 .dolt/
 *.db
