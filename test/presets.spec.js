@@ -31,6 +31,39 @@ test('meme preset sets a large default font-size scaled to canvas width', async 
   expect(r).toMatch(/font-size:\s*50px/); // 10% of 500
 });
 
+test('meme caption renders as large text (tall ink band), not tiny default', async ({ page }) => {
+  await page.goto('/test/test-page.html');
+  const bandHeight = await page.evaluate(async () => {
+    const el = document.createElement('canvas-text');
+    el.setAttribute('preset', 'meme');
+    el.setAttribute('width', '500');
+    el.setAttribute('height', '500');
+    el.innerHTML = `
+      <img slot="background" src="/test/fixtures/blue-square.png" crossorigin="anonymous">
+      <span slot="text-1">WHEN THE CODE</span>`;
+    document.getElementById('harness').appendChild(el);
+    await new Promise((res) => el.addEventListener('canvas-text:rendered', res, { once: true }));
+    const c = el.getCanvas();
+    const ctx = c.getContext('2d');
+    const dpr = c.width / 500;
+    const topPx = Math.round(c.height * 0.4);
+    const d = ctx.getImageData(0, 0, c.width, topPx).data;
+    let minY = Infinity, maxY = -Infinity;
+    for (let y = 0; y < topPx; y++) {
+      for (let x = 0; x < c.width; x++) {
+        const i = (y * c.width + x) * 4;
+        if (d[i] > 230 && d[i + 1] > 230 && d[i + 2] > 230 && d[i + 3] > 0) {
+          if (y < minY) minY = y;
+          if (y > maxY) maxY = y;
+          break;
+        }
+      }
+    }
+    return (maxY - minY) / dpr;
+  });
+  expect(bandHeight).toBeGreaterThan(30); // ~50px text; pre-fix default was ~16px
+});
+
 test('meme preset renders white-on-stroke text top and bottom', async ({ page }) => {
   await page.goto('/test/test-page.html');
   const r = await page.evaluate(async () => {
