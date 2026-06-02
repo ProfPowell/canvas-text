@@ -9,6 +9,7 @@ playwright-report
 .idea/
 .playwright-mcp/
 .superpowers/
+/*.png
 
 # Beads / Dolt files (added by bd init)
 .dolt/
