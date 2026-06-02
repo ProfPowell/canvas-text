@@ -20,6 +20,17 @@ test('applyPresetToLayers(meme) fills text placement and stroke, respects author
   expect(r[2].presetStyle).toContain('-webkit-text-stroke');
 });
 
+test('meme preset sets a large default font-size scaled to canvas width', async ({ page }) => {
+  await page.goto('/test/test-page.html');
+  const r = await page.evaluate(async () => {
+    const { applyPresetToLayers } = await import('/src/presets.js');
+    const layers = [{ slot: 'text-1', kind: 'text', z: 1, place: null, offsetX: null, offsetY: null, fit: null }];
+    applyPresetToLayers('meme', layers, { width: 500, height: 500 });
+    return layers[0].presetStyle;
+  });
+  expect(r).toMatch(/font-size:\s*50px/); // 10% of 500
+});
+
 test('meme preset renders white-on-stroke text top and bottom', async ({ page }) => {
   await page.goto('/test/test-page.html');
   const r = await page.evaluate(async () => {

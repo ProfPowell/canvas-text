@@ -25,22 +25,25 @@ function bySlotIndex(list) {
 }
 
 export function applyPresetToLayers(name, layers, dims) {
-  if (name === 'meme') return applyMeme(layers);
+  if (name === 'meme') return applyMeme(layers, dims);
   if (name === 'badge') return applyBadge(layers, dims);
   if (name === 'banner') return applyBanner(layers, dims);
   if (name === 'caption') return applyCaption(layers);
   // unknown preset: no-op (forward compatible)
 }
 
-function applyMeme(layers) {
+function applyMeme(layers, dims) {
   const bg = background(layers);
   if (bg) fill(bg, 'fit', 'cover');
+  // Default to large meme-style text scaled to the canvas; an inline font-size
+  // on the layer still wins (it sits on the inner node, not this wrapper).
+  const fontSize = Math.round(dims.width * 0.1);
   const ts = bySlotIndex(texts(layers));
   ts.forEach((t, i) => {
     if (i === 0) { fill(t, 'place', 'top'); fill(t, 'offsetY', '16'); }
     else if (i === 1) { fill(t, 'place', 'bottom'); fill(t, 'offsetY', '-16'); }
     else { fill(t, 'place', 'center'); }
-    t.presetStyle = (t.presetStyle || '') + MEME_TEXT_STYLE;
+    t.presetStyle = (t.presetStyle || '') + MEME_TEXT_STYLE + `font-size:${fontSize}px;`;
   });
 }
 
