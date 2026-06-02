@@ -28,3 +28,15 @@ test('demos.html embeds all five standalone demos in browser-window frames', asy
     expect(srcs).toContain(name);
   }
 });
+
+test('demos.html uses <code-block> for source (no raw pre/code)', async ({ page }) => {
+  await page.goto('/docs/demos.html', { waitUntil: 'domcontentloaded' });
+  const counts = await page.evaluate(() => ({
+    codeBlocks: document.querySelectorAll('code-block').length,
+    rawPre: document.querySelectorAll('pre').length,
+    hasImport: !!document.querySelector('script[src*="@profpowell/code-block"]'),
+  }));
+  expect(counts.codeBlocks).toBeGreaterThanOrEqual(12);
+  expect(counts.rawPre).toBe(0);
+  expect(counts.hasImport).toBe(true);
+});

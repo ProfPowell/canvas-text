@@ -10,6 +10,7 @@
     { "imports": { "render-tag": "https://esm.sh/render-tag@0.1.7" } }
   </script>
   <script type="module" src="./dist/canvas-text.js"></script>
+  <script type="module" src="https://esm.sh/@profpowell/code-block@2.9.0"></script>
 </head>
 <body>
   <header class="site-header">
@@ -42,11 +43,11 @@
       </div>
 
       <h3>Source</h3>
-      <pre><code>&lt;canvas-text width="500" height="120" compose="text-only"&gt;
+      <code-block language="html">&lt;canvas-text width="500" height="120" compose="text-only"&gt;
   &lt;p style="padding: 20px 24px; font-size: 28px; margin: 0;"&gt;
     &lt;strong&gt;Hello&lt;/strong&gt;, &lt;em&gt;world&lt;/em&gt;!
   &lt;/p&gt;
-&lt;/canvas-text&gt;</code></pre>
+&lt;/canvas-text&gt;</code-block>
     </section>
 
     <!-- LAYERED -->
@@ -68,7 +69,7 @@
       </div>
 
       <h3>Source</h3>
-      <pre><code>&lt;canvas-text width="500" height="500"&gt;
+      <code-block language="html">&lt;canvas-text width="500" height="500"&gt;
   &lt;img slot="background" src="./test/fixtures/red-square.png"
        crossorigin="anonymous" alt="Red background"&gt;
   &lt;div slot="text-1"
@@ -83,7 +84,7 @@
               padding-top:400px;"&gt;
     BOTTOM TEXT
   &lt;/div&gt;
-&lt;/canvas-text&gt;</code></pre>
+&lt;/canvas-text&gt;</code-block>
 
       <p class="demo-description">Use <code>padding-top</code> for vertical placement of bottom text — <code>position:absolute</code> is not supported by render-tag. See <a href="api.html#css-support">CSS support</a> for the full list.</p>
     </section>
@@ -105,7 +106,7 @@
       </div>
 
       <h3>Source</h3>
-      <pre><code>&lt;canvas-text width="400" height="400"&gt;
+      <code-block language="html">&lt;canvas-text width="400" height="400"&gt;
   &lt;!-- z=1: full red background --&gt;
   &lt;img slot="background-1" src="./test/fixtures/red-square.png"
        crossorigin="anonymous" alt="Red background at z=1"&gt;
@@ -122,7 +123,7 @@
               padding-top:160px;"&gt;
     z=3 text
   &lt;/div&gt;
-&lt;/canvas-text&gt;</code></pre>
+&lt;/canvas-text&gt;</code-block>
     </section>
 
     <!-- THEME BRIDGE -->
@@ -155,7 +156,7 @@
       </div>
 
       <h3>Source</h3>
-      <pre><code>&lt;!-- Wrap canvas-text in a styled ancestor --&gt;
+      <code-block language="html">&lt;!-- Wrap canvas-text in a styled ancestor --&gt;
 &lt;div style="color: steelblue; font-size: 28px;
             font-weight: 600; font-family: Georgia, serif;"&gt;
 
@@ -170,7 +171,7 @@
                theme="none" compose="text-only"&gt;
     &lt;div style="padding: 16px 20px;"&gt;Theme: none&lt;/div&gt;
   &lt;/canvas-text&gt;
-&lt;/div&gt;</code></pre>
+&lt;/div&gt;</code-block>
 
       <p class="demo-description">Allowlisted properties: <code>color</code>, <code>font-family</code>, <code>font-size</code>, <code>font-weight</code>, <code>font-style</code>, <code>line-height</code>, <code>letter-spacing</code>, <code>text-align</code>, <code>background-color</code>. See <a href="api.html#theme-bridge">Theme Bridge API</a>.</p>
     </section>
@@ -195,7 +196,7 @@
       </div>
 
       <h3>Source</h3>
-      <pre><code>&lt;canvas-text id="export-demo" width="500" height="160" compose="text-only"&gt;
+      <code-block language="html">&lt;canvas-text id="export-demo" width="500" height="160" compose="text-only"&gt;
   &lt;div style="padding: 32px; font-size: 32px; font-weight: bold;
               text-align: center; color: #0969da;"&gt;
     Export me as PNG or JPEG!
@@ -222,7 +223,7 @@
     () =&gt; download('image/png', 'png'));
   document.getElementById('btn-jpeg').addEventListener('click',
     () =&gt; download('image/jpeg', 'jpg'));
-&lt;/script&gt;</code></pre>
+&lt;/script&gt;</code-block>
     </section>
 
     <!-- ACCESSIBILITY -->
@@ -244,22 +245,22 @@
 
       <details>
         <summary>Visually-hidden DOM snippet (inspect to verify)</summary>
-        <pre><code>&lt;canvas-text alt="A friendly hello message"&gt;
+        <code-block language="html">&lt;canvas-text alt="A friendly hello message"&gt;
   &lt;!-- slotted children stay in light DOM, hidden via clip-path --&gt;
   &lt;p style="..."&gt;Hello from &lt;strong&gt;canvas-text&lt;/strong&gt;!&lt;/p&gt;
 
   &lt;!-- canvas is aria-hidden, gets aria-label from alt --&gt;
   &lt;canvas aria-hidden="true" aria-label="A friendly hello message"&gt;&lt;/canvas&gt;
-&lt;/canvas-text&gt;</code></pre>
+&lt;/canvas-text&gt;</code-block>
       </details>
 
       <h3>Source</h3>
-      <pre><code>&lt;canvas-text width="500" height="120" compose="text-only"
+      <code-block language="html">&lt;canvas-text width="500" height="120" compose="text-only"
              alt="A friendly hello message"&gt;
   &lt;p style="padding: 20px 24px; font-size: 28px; margin: 0;"&gt;
     Hello from &lt;strong&gt;canvas-text&lt;/strong&gt;!
   &lt;/p&gt;
-&lt;/canvas-text&gt;</code></pre>
+&lt;/canvas-text&gt;</code-block>
     </section>
 
     <!-- DYNAMIC / REACTIVE -->
@@ -293,7 +294,7 @@
       </div>
 
       <h3>Source</h3>
-      <pre><code>&lt;input id="dynamic-text" type="text" value="Hello, canvas-text!"&gt;
+      <code-block language="html">&lt;input id="dynamic-text" type="text" value="Hello, canvas-text!"&gt;
 &lt;select id="dynamic-bg"&gt;
   &lt;option value="red"&gt;Red square&lt;/option&gt;
   &lt;option value="blue"&gt;Blue square&lt;/option&gt;
@@ -328,7 +329,7 @@
       bgImg.src = fixtures + bgSelect.value + '-square.png';
     }
   });
-&lt;/script&gt;</code></pre>
+&lt;/script&gt;</code-block>
     </section>
 
     <!-- REAL-WORLD DEMOS (v0.2) -->
@@ -343,11 +344,11 @@
         <iframe src="./meme.html" title="Meme generator demo" loading="lazy" style="height: 780px"></iframe>
       </div>
       <h3>Source</h3>
-      <pre><code>&lt;canvas-text preset="meme" width="500" height="500"&gt;
+      <code-block language="html">&lt;canvas-text preset="meme" width="500" height="500"&gt;
   &lt;img slot="background" src="cat.jpg" fit="cover" alt=""&gt;
   &lt;span slot="text-1"&gt;WHEN THE CODE&lt;/span&gt;
   &lt;span slot="text-2"&gt;COMPILES FIRST TRY&lt;/span&gt;
-&lt;/canvas-text&gt;</code></pre>
+&lt;/canvas-text&gt;</code-block>
       <p><a href="./meme.html" target="_blank" rel="noopener">Open standalone &#8599;</a></p>
     </section>
 
@@ -363,13 +364,13 @@
         <iframe src="./badge.html" title="User badge demo" loading="lazy" style="height: 540px"></iframe>
       </div>
       <h3>Source</h3>
-      <pre><code>&lt;canvas-text preset="badge" width="320" height="320"&gt;
+      <code-block language="html">&lt;canvas-text preset="badge" width="320" height="320"&gt;
   &lt;img slot="image-1" src="avatar.png" width="96" height="96" alt=""&gt;
   &lt;span slot="text-1"&gt;Prof Powell&lt;/span&gt;
   &lt;span slot="text-2"&gt;LEVEL 42 &middot; WEB WIZARD&lt;/span&gt;
   &lt;img slot="image-2" src="b1.png" width="44" height="44" alt=""&gt;
   &lt;img slot="image-3" src="b2.png" width="44" height="44" alt=""&gt;
-&lt;/canvas-text&gt;</code></pre>
+&lt;/canvas-text&gt;</code-block>
       <p><a href="./badge.html" target="_blank" rel="noopener">Open standalone &#8599;</a></p>
     </section>
 
@@ -385,13 +386,13 @@
         <iframe src="./banner.html" title="Game banner demo" loading="lazy" style="height: 620px"></iframe>
       </div>
       <h3>Source</h3>
-      <pre><code>&lt;canvas-text preset="banner" width="480" height="270"&gt;
+      <code-block language="html">&lt;canvas-text preset="banner" width="480" height="270"&gt;
   &lt;img slot="background" src="banner.jpg" fit="cover" alt=""&gt;
   &lt;span slot="text-1"&gt;ProfPowell&lt;/span&gt;
   &lt;img slot="image-1" src="a.png" width="56" height="56" alt=""&gt;
   &lt;img slot="image-2" src="b.png" width="56" height="56" alt=""&gt;
   &lt;img slot="image-3" src="c.png" width="56" height="56" alt=""&gt;
-&lt;/canvas-text&gt;</code></pre>
+&lt;/canvas-text&gt;</code-block>
       <p><a href="./banner.html" target="_blank" rel="noopener">Open standalone &#8599;</a></p>
     </section>
 
@@ -407,11 +408,11 @@
         <iframe src="./og-card.html" title="OG share card demo" loading="lazy" style="height: 620px"></iframe>
       </div>
       <h3>Source</h3>
-      <pre><code>&lt;canvas-text width="600" height="315"&gt;
+      <code-block language="html">&lt;canvas-text width="600" height="315"&gt;
   &lt;img slot="background" src="hero.jpg" fit="cover" alt=""&gt;
   &lt;div slot="text-1" place="center-left" offset-x="40" offset-y="-20"&gt;Shipping canvas-text 0.2&lt;/div&gt;
   &lt;div slot="text-2" place="center-left" offset-x="40" offset-y="40"&gt;Placement, presets &amp; fonts&lt;/div&gt;
-&lt;/canvas-text&gt;</code></pre>
+&lt;/canvas-text&gt;</code-block>
       <p><a href="./og-card.html" target="_blank" rel="noopener">Open standalone &#8599;</a></p>
     </section>
 
@@ -427,14 +428,14 @@
         <iframe src="./caption.html" title="Caption flattener demo" loading="lazy" style="height: 620px"></iframe>
       </div>
       <h3>Source</h3>
-      <pre><code>&lt;canvas-text preset="caption" width="500" height="333"&gt;
+      <code-block language="html">&lt;canvas-text preset="caption" width="500" height="333"&gt;
   &lt;figure&gt;
     &lt;img src="photo.jpg" alt=""&gt;
     &lt;figcaption style="background:rgba(0,0,0,.55);color:#fff;padding:10px"&gt;
       A captioned figure, flattened to one image
     &lt;/figcaption&gt;
   &lt;/figure&gt;
-&lt;/canvas-text&gt;</code></pre>
+&lt;/canvas-text&gt;</code-block>
       <p><a href="./caption.html" target="_blank" rel="noopener">Open standalone &#8599;</a></p>
     </section>
 
