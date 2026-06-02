@@ -2,7 +2,7 @@ import * as renderTag from 'render-tag';
 import { wrapWithTheme } from './theme-bridge.js';
 import { collectLayers, paintLayer, backgroundImageRatio } from './layers.js';
 
-const OBSERVED = ['width', 'height', 'theme', 'lang', 'accuracy', 'dpr', 'format', 'compose', 'alt'];
+const OBSERVED = ['width', 'height', 'theme', 'lang', 'accuracy', 'dpr', 'format', 'compose', 'alt', 'preset'];
 
 let stylesInjected = false;
 function injectStyles() {
@@ -58,7 +58,7 @@ export class CanvasTextElement extends HTMLElement {
       subtree: true,
       characterData: true,
       attributes: true,
-      attributeFilter: ['src', 'slot', 'style', 'class', 'srcset', 'crossorigin'],
+      attributeFilter: ['src', 'slot', 'style', 'class', 'srcset', 'crossorigin', 'place', 'offset-x', 'offset-y', 'fit', 'width', 'height'],
     });
     this.#schedule();
   }

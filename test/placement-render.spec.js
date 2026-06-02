@@ -113,3 +113,28 @@ test('text place=center keeps ink in the middle band, not top or bottom', async 
   expect(r.mid).toBeGreaterThan(r.top);
   expect(r.mid).toBeGreaterThan(r.bottom);
 });
+
+test('mutating a layer place attribute re-renders', async ({ page }) => {
+  await page.goto('/test/test-page.html');
+  const r = await page.evaluate(async () => {
+    const el = document.createElement('canvas-text');
+    el.setAttribute('width', '300');
+    el.setAttribute('height', '300');
+    el.innerHTML = `<div slot="text-1" place="top" style="font-size:48px;font-weight:bold;color:black">X</div>`;
+    document.getElementById('harness').appendChild(el);
+    await new Promise((res) => el.addEventListener('canvas-text:rendered', res, { once: true }));
+
+    const layer = el.querySelector('[slot="text-1"]');
+    layer.setAttribute('place', 'bottom');
+    await new Promise((res) => el.addEventListener('canvas-text:rendered', res, { once: true }));
+
+    const c = el.getCanvas();
+    const ctx = c.getContext('2d');
+    const countInk = (y0, y1) => {
+      const d = ctx.getImageData(0, y0, c.width, y1 - y0).data;
+      let n = 0; for (let i = 3; i < d.length; i += 4) if (d[i] > 0) n++; return n;
+    };
+    return { top: countInk(0, c.height * 0.4 | 0), bottom: countInk(c.height * 0.6 | 0, c.height) };
+  });
+  expect(r.bottom).toBeGreaterThan(r.top * 3);
+});
