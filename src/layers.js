@@ -1,4 +1,5 @@
 import { wrapWithTheme } from './theme-bridge.js';
+import { resolveAnchor, parseLength, resolveImageBoxCss, imageDrawArgs } from './placement.js';
 
 const SLOT_RE = /^(background|image|text)(?:-(\d+))?$/;
 
@@ -56,24 +57,42 @@ export async function paintLayer(ctx, layer, opts, renderTag, host, themeMode, o
       if (!img.complete) {
         await new Promise((res, rej) => {
           img.addEventListener('load', res, { once: true });
-          img.addEventListener(
-            'error',
-            () => rej(new Error(`image load failed: ${img.src}`)),
-            { once: true }
-          );
+          img.addEventListener('error', () => rej(new Error(`image load failed: ${img.src}`)), { once: true });
         });
       }
       if (img.naturalWidth === 0) {
         throw new Error(`image load failed: ${img.src}`);
       }
-      // img.decode() may reject on already-broken images; the load/error guard above
-      // covers the broken case, so a rejection here is safe to swallow.
       try {
         await img.decode();
       } catch {
         /* tolerated — load/error above is the source of truth */
       }
-      ctx.drawImage(img, 0, 0, width * dpr, height * dpr);
+
+      const canvasW = width * dpr;
+      const canvasH = height * dpr;
+      const fit = layer.fit || (layer.isBackground ? 'cover' : 'contain');
+
+      let boxW, boxH;
+      if (layer.isBackground) {
+        boxW = canvasW;
+        boxH = canvasH;
+      } else {
+        const attrW = numAttr(img, 'width');
+        const attrH = numAttr(img, 'height');
+        const box = resolveImageBoxCss({ natW: img.naturalWidth, natH: img.naturalHeight, attrW, attrH });
+        boxW = box.w * dpr;
+        boxH = box.h * dpr;
+      }
+
+      const { ax, ay } = resolveAnchor(layer.place);
+      const offX = parseLength(layer.offsetX, width) * dpr;
+      const offY = parseLength(layer.offsetY, height) * dpr;
+      const a = imageDrawArgs({
+        natW: img.naturalWidth, natH: img.naturalHeight,
+        boxW, boxH, fit, ax, ay, offsetX: offX, offsetY: offY, canvasW, canvasH,
+      });
+      ctx.drawImage(img, a.sx, a.sy, a.sw, a.sh, a.dx, a.dy, a.dw, a.dh);
     } else {
       const themed = wrapWithTheme(layer.node.outerHTML, host, themeMode, layer.node);
       // Pass the full target height so CSS positioning inside the layer (e.g.
@@ -91,6 +110,13 @@ export async function paintLayer(ctx, layer, opts, renderTag, host, themeMode, o
   } catch (error) {
     onError({ slot: layer.slot, error });
   }
+}
+
+function numAttr(node, name) {
+  const v = node.getAttribute(name);
+  if (v == null || v === '') return null;
+  const n = Number(v);
+  return Number.isFinite(n) && n > 0 ? n : null;
 }
 
 export async function backgroundImageRatio(host) {
