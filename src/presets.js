@@ -14,6 +14,9 @@ function fill(layer, field, value) {
 function texts(layers) {
   return layers.filter((l) => l.kind === 'text' && l.slot !== '(default)');
 }
+function images(layers) {
+  return layers.filter((l) => l.kind === 'image' && !l.isBackground);
+}
 function background(layers) {
   return layers.find((l) => l.kind === 'image' && l.isBackground);
 }
@@ -21,10 +24,10 @@ function bySlotIndex(list) {
   return [...list].sort((a, b) => (a.z ?? 0) - (b.z ?? 0));
 }
 
-export function applyPresetToLayers(name, layers, ctx) {
+export function applyPresetToLayers(name, layers, dims) {
   if (name === 'meme') return applyMeme(layers);
-  if (name === 'badge') return applyBadge(layers, ctx);
-  if (name === 'banner') return applyBanner(layers, ctx);
+  if (name === 'badge') return applyBadge(layers, dims);
+  if (name === 'banner') return applyBanner(layers, dims);
   if (name === 'caption') return applyCaption(layers);
   // unknown preset: no-op (forward compatible)
 }
@@ -41,7 +44,33 @@ function applyMeme(layers) {
   });
 }
 
-// applyBadge, applyBanner, applyCaption are added in later tasks.
-function applyBadge() {}
-function applyBanner() {}
+// Distribute items left-to-right, centered horizontally, anchored bottom-center.
+export function autoRow(items, { itemW, gap, offsetY }) {
+  const n = items.length;
+  if (!n) return;
+  const span = n * itemW + (n - 1) * gap;
+  const start = -span / 2 + itemW / 2; // center x of first item, relative to canvas center
+  items.forEach((it, i) => {
+    fill(it, 'place', 'bottom-center');
+    fill(it, 'offsetX', String(start + i * (itemW + gap)));
+    fill(it, 'offsetY', String(offsetY));
+    fill(it, 'fit', 'contain');
+  });
+}
+
+function applyBadge(layers, dims) {
+  const h = dims.height;
+  const imgs = bySlotIndex(images(layers));
+  const ts = bySlotIndex(texts(layers));
+  const [avatar, ...badges] = imgs;
+  if (avatar) {
+    fill(avatar, 'place', 'top-center');
+    fill(avatar, 'offsetY', String(Math.round(h * 0.12)));
+  }
+  if (ts[0]) { fill(ts[0], 'place', 'top-center'); fill(ts[0], 'offsetY', String(Math.round(h * 0.42))); }
+  if (ts[1]) { fill(ts[1], 'place', 'top-center'); fill(ts[1], 'offsetY', String(Math.round(h * 0.54))); }
+  autoRow(badges, { itemW: 44, gap: 16, offsetY: -Math.round(h * 0.08) });
+}
+
+function applyBanner(layers, dims) {} // eslint-disable-line no-unused-vars
 function applyCaption() {}
