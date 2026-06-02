@@ -20,3 +20,11 @@ for (const name of PAGES) {
     expect(ink).toBeGreaterThan(0);
   });
 }
+
+test('demos.html embeds all five standalone demos in browser-window frames', async ({ page }) => {
+  await page.goto('/docs/demos.html', { waitUntil: 'domcontentloaded' });
+  const srcs = await page.$$eval('.browser-window iframe', (els) => els.map((e) => e.getAttribute('src')));
+  for (const name of ['./meme.html', './badge.html', './banner.html', './og-card.html', './caption.html']) {
+    expect(srcs).toContain(name);
+  }
+});
