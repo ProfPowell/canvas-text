@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>canvas-text — Game banner</title>
+  <script type="importmap">
+    { "imports": { "render-tag": "../node_modules/render-tag/lib/index.js" } }
+  </script>
+  <script type="module" src="./dist/canvas-text.js"></script>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 720px; margin: 2rem auto; padding: 0 1rem; }
+    canvas-text { border: 1px solid #ccc; }
+    .tray img { width:48px; height:48px; margin:4px; cursor:pointer; border:2px solid transparent; }
+    .tray img.sel { border-color:#7c3aed; }
+  </style>
+</head>
+<body>
+  <h1>Game banner builder</h1>
+  <canvas-text preset="banner" width="480" height="270">
+    <img slot="background" src="https://picsum.photos/seed/bannerbg/480/270" crossorigin="anonymous" fit="cover">
+    <span slot="text-1" style="color:#fde68a;font-size:30px;font-weight:800;-webkit-text-stroke:1px #000">ProfPowell</span>
+    <img slot="image-1" id="s1" src="https://picsum.photos/seed/x1/64/64" crossorigin="anonymous" width="56" height="56">
+    <img slot="image-2" id="s2" src="https://picsum.photos/seed/x2/64/64" crossorigin="anonymous" width="56" height="56">
+    <img slot="image-3" id="s3" src="https://picsum.photos/seed/x3/64/64" crossorigin="anonymous" width="56" height="56">
+  </canvas-text>
+  <p>Pick badges (updates the three slots):</p>
+  <div class="tray" id="tray">
+    <img data-seed="a1" src="https://picsum.photos/seed/a1/64/64" crossorigin="anonymous">
+    <img data-seed="a2" src="https://picsum.photos/seed/a2/64/64" crossorigin="anonymous">
+    <img data-seed="a3" src="https://picsum.photos/seed/a3/64/64" crossorigin="anonymous">
+    <img data-seed="a4" src="https://picsum.photos/seed/a4/64/64" crossorigin="anonymous">
+    <img data-seed="a5" src="https://picsum.photos/seed/a5/64/64" crossorigin="anonymous">
+  </div>
+  <button id="dl">Download PNG</button>
+  <script type="module">
+    const el = document.querySelector('canvas-text');
+    const slots = ['s1','s2','s3'].map((id) => document.getElementById(id));
+    let picks = [];
+    document.getElementById('tray').addEventListener('click', (e) => {
+      const img = e.target.closest('img'); if (!img) return;
+      const seed = img.dataset.seed;
+      const i = picks.indexOf(seed);
+      if (i >= 0) picks.splice(i, 1); else if (picks.length < 3) picks.push(seed);
+      [...document.querySelectorAll('.tray img')].forEach((t) => t.classList.toggle('sel', picks.includes(t.dataset.seed)));
+      slots.forEach((s, idx) => { if (picks[idx]) s.src = `https://picsum.photos/seed/${picks[idx]}/64/64`; });
+    });
+    document.getElementById('dl').addEventListener('click', async () => {
+      const blob = await el.toBlob('image/png');
+      const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'banner.png'; a.click(); URL.revokeObjectURL(a.href);
+    });
+  </script>
+</body>
+</html>
