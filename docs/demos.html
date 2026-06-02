@@ -27,114 +27,7 @@
 
   <main>
     <h1>Interactive Demos</h1>
-    <p class="demo-description">Live examples of <code>&lt;canvas-text&gt;</code>. Each section shows the markup alongside the rendered canvas. The real-world demos below are embedded live &mdash; type, pick, and download right in the frame.</p>
-
-    <!-- REAL-WORLD DEMOS (v0.2) -->
-    <section class="demo-section" id="demo-meme">
-      <h2>Meme generator</h2>
-      <p class="demo-description"><code>preset="meme"</code> applies Impact-style type, a black stroke, and top/bottom placement. Edit the captions and download the PNG.</p>
-      <div class="browser-window">
-        <div class="browser-window-bar">
-          <span class="browser-window-dots"><span class="r"></span><span class="y"></span><span class="g"></span></span>
-          <span class="browser-window-url">meme.html</span>
-        </div>
-        <iframe src="./meme.html" title="Meme generator demo" loading="lazy" style="height: 780px"></iframe>
-      </div>
-      <h3>Source</h3>
-      <pre><code>&lt;canvas-text preset="meme" width="500" height="500"&gt;
-  &lt;img slot="background" src="cat.jpg" fit="cover" alt=""&gt;
-  &lt;span slot="text-1"&gt;WHEN THE CODE&lt;/span&gt;
-  &lt;span slot="text-2"&gt;COMPILES FIRST TRY&lt;/span&gt;
-&lt;/canvas-text&gt;</code></pre>
-      <p><a href="./meme.html" target="_blank" rel="noopener">Open standalone &#8599;</a></p>
-    </section>
-
-    <!-- BADGE -->
-    <section class="demo-section" id="demo-badge">
-      <h2>User badge / profile card</h2>
-      <p class="demo-description"><code>preset="badge"</code> centers an avatar, stacks name and title, and lays out the remaining <code>image-N</code> layers in a row.</p>
-      <div class="browser-window">
-        <div class="browser-window-bar">
-          <span class="browser-window-dots"><span class="r"></span><span class="y"></span><span class="g"></span></span>
-          <span class="browser-window-url">badge.html</span>
-        </div>
-        <iframe src="./badge.html" title="User badge demo" loading="lazy" style="height: 540px"></iframe>
-      </div>
-      <h3>Source</h3>
-      <pre><code>&lt;canvas-text preset="badge" width="320" height="320"&gt;
-  &lt;img slot="image-1" src="avatar.png" width="96" height="96" alt=""&gt;
-  &lt;span slot="text-1"&gt;Prof Powell&lt;/span&gt;
-  &lt;span slot="text-2"&gt;LEVEL 42 &middot; WEB WIZARD&lt;/span&gt;
-  &lt;img slot="image-2" src="b1.png" width="44" height="44" alt=""&gt;
-  &lt;img slot="image-3" src="b2.png" width="44" height="44" alt=""&gt;
-&lt;/canvas-text&gt;</code></pre>
-      <p><a href="./badge.html" target="_blank" rel="noopener">Open standalone &#8599;</a></p>
-    </section>
-
-    <!-- BANNER -->
-    <section class="demo-section" id="demo-banner">
-      <h2>Game banner builder</h2>
-      <p class="demo-description"><code>preset="banner"</code> places the player name up top and arranges the badge row along the bottom. Pick badges from the tray to recompose live.</p>
-      <div class="browser-window">
-        <div class="browser-window-bar">
-          <span class="browser-window-dots"><span class="r"></span><span class="y"></span><span class="g"></span></span>
-          <span class="browser-window-url">banner.html</span>
-        </div>
-        <iframe src="./banner.html" title="Game banner demo" loading="lazy" style="height: 620px"></iframe>
-      </div>
-      <h3>Source</h3>
-      <pre><code>&lt;canvas-text preset="banner" width="480" height="270"&gt;
-  &lt;img slot="background" src="banner.jpg" fit="cover" alt=""&gt;
-  &lt;span slot="text-1"&gt;ProfPowell&lt;/span&gt;
-  &lt;img slot="image-1" src="a.png" width="56" height="56" alt=""&gt;
-  &lt;img slot="image-2" src="b.png" width="56" height="56" alt=""&gt;
-  &lt;img slot="image-3" src="c.png" width="56" height="56" alt=""&gt;
-&lt;/canvas-text&gt;</code></pre>
-      <p><a href="./banner.html" target="_blank" rel="noopener">Open standalone &#8599;</a></p>
-    </section>
-
-    <!-- OG CARD -->
-    <section class="demo-section" id="demo-og-card">
-      <h2>OG / social share card</h2>
-      <p class="demo-description">No preset &mdash; just placement attributes. <code>place="center-left"</code> with <code>offset-x</code>/<code>offset-y</code> positions the title and subtitle over a photo.</p>
-      <div class="browser-window">
-        <div class="browser-window-bar">
-          <span class="browser-window-dots"><span class="r"></span><span class="y"></span><span class="g"></span></span>
-          <span class="browser-window-url">og-card.html</span>
-        </div>
-        <iframe src="./og-card.html" title="OG share card demo" loading="lazy" style="height: 620px"></iframe>
-      </div>
-      <h3>Source</h3>
-      <pre><code>&lt;canvas-text width="600" height="315"&gt;
-  &lt;img slot="background" src="hero.jpg" fit="cover" alt=""&gt;
-  &lt;div slot="text-1" place="center-left" offset-x="40" offset-y="-20"&gt;Shipping canvas-text 0.2&lt;/div&gt;
-  &lt;div slot="text-2" place="center-left" offset-x="40" offset-y="40"&gt;Placement, presets &amp; fonts&lt;/div&gt;
-&lt;/canvas-text&gt;</code></pre>
-      <p><a href="./og-card.html" target="_blank" rel="noopener">Open standalone &#8599;</a></p>
-    </section>
-
-    <!-- CAPTION -->
-    <section class="demo-section" id="demo-caption">
-      <h2>Caption / figure flattener</h2>
-      <p class="demo-description"><code>preset="caption"</code> flattens a semantic <code>&lt;figure&gt;</code> + <code>&lt;figcaption&gt;</code> into one image with a full-width caption band. The band color is the figcaption's own <code>background</code>.</p>
-      <div class="browser-window">
-        <div class="browser-window-bar">
-          <span class="browser-window-dots"><span class="r"></span><span class="y"></span><span class="g"></span></span>
-          <span class="browser-window-url">caption.html</span>
-        </div>
-        <iframe src="./caption.html" title="Caption flattener demo" loading="lazy" style="height: 620px"></iframe>
-      </div>
-      <h3>Source</h3>
-      <pre><code>&lt;canvas-text preset="caption" width="500" height="333"&gt;
-  &lt;figure&gt;
-    &lt;img src="photo.jpg" alt=""&gt;
-    &lt;figcaption style="background:rgba(0,0,0,.55);color:#fff;padding:10px"&gt;
-      A captioned figure, flattened to one image
-    &lt;/figcaption&gt;
-  &lt;/figure&gt;
-&lt;/canvas-text&gt;</code></pre>
-      <p><a href="./caption.html" target="_blank" rel="noopener">Open standalone &#8599;</a></p>
-    </section>
+    <p class="demo-description">Live examples of <code>&lt;canvas-text&gt;</code>. Each section shows the markup alongside the rendered canvas. The building blocks come first; the real-world demos at the end are embedded live &mdash; type, pick, and download right in the frame.</p>
 
     <!-- TEXT ONLY -->
     <section class="demo-section" id="text-only">
@@ -437,6 +330,114 @@
   });
 &lt;/script&gt;</code></pre>
     </section>
+
+    <!-- REAL-WORLD DEMOS (v0.2) -->
+    <section class="demo-section" id="demo-meme">
+      <h2>Meme generator</h2>
+      <p class="demo-description"><code>preset="meme"</code> applies Impact-style type, a black stroke, and top/bottom placement. Edit the captions and download the PNG.</p>
+      <div class="browser-window">
+        <div class="browser-window-bar">
+          <span class="browser-window-dots"><span class="r"></span><span class="y"></span><span class="g"></span></span>
+          <span class="browser-window-url">meme.html</span>
+        </div>
+        <iframe src="./meme.html" title="Meme generator demo" loading="lazy" style="height: 780px"></iframe>
+      </div>
+      <h3>Source</h3>
+      <pre><code>&lt;canvas-text preset="meme" width="500" height="500"&gt;
+  &lt;img slot="background" src="cat.jpg" fit="cover" alt=""&gt;
+  &lt;span slot="text-1"&gt;WHEN THE CODE&lt;/span&gt;
+  &lt;span slot="text-2"&gt;COMPILES FIRST TRY&lt;/span&gt;
+&lt;/canvas-text&gt;</code></pre>
+      <p><a href="./meme.html" target="_blank" rel="noopener">Open standalone &#8599;</a></p>
+    </section>
+
+    <!-- BADGE -->
+    <section class="demo-section" id="demo-badge">
+      <h2>User badge / profile card</h2>
+      <p class="demo-description"><code>preset="badge"</code> centers an avatar, stacks name and title, and lays out the remaining <code>image-N</code> layers in a row.</p>
+      <div class="browser-window">
+        <div class="browser-window-bar">
+          <span class="browser-window-dots"><span class="r"></span><span class="y"></span><span class="g"></span></span>
+          <span class="browser-window-url">badge.html</span>
+        </div>
+        <iframe src="./badge.html" title="User badge demo" loading="lazy" style="height: 540px"></iframe>
+      </div>
+      <h3>Source</h3>
+      <pre><code>&lt;canvas-text preset="badge" width="320" height="320"&gt;
+  &lt;img slot="image-1" src="avatar.png" width="96" height="96" alt=""&gt;
+  &lt;span slot="text-1"&gt;Prof Powell&lt;/span&gt;
+  &lt;span slot="text-2"&gt;LEVEL 42 &middot; WEB WIZARD&lt;/span&gt;
+  &lt;img slot="image-2" src="b1.png" width="44" height="44" alt=""&gt;
+  &lt;img slot="image-3" src="b2.png" width="44" height="44" alt=""&gt;
+&lt;/canvas-text&gt;</code></pre>
+      <p><a href="./badge.html" target="_blank" rel="noopener">Open standalone &#8599;</a></p>
+    </section>
+
+    <!-- BANNER -->
+    <section class="demo-section" id="demo-banner">
+      <h2>Game banner builder</h2>
+      <p class="demo-description"><code>preset="banner"</code> places the player name up top and arranges the badge row along the bottom. Pick badges from the tray to recompose live.</p>
+      <div class="browser-window">
+        <div class="browser-window-bar">
+          <span class="browser-window-dots"><span class="r"></span><span class="y"></span><span class="g"></span></span>
+          <span class="browser-window-url">banner.html</span>
+        </div>
+        <iframe src="./banner.html" title="Game banner demo" loading="lazy" style="height: 620px"></iframe>
+      </div>
+      <h3>Source</h3>
+      <pre><code>&lt;canvas-text preset="banner" width="480" height="270"&gt;
+  &lt;img slot="background" src="banner.jpg" fit="cover" alt=""&gt;
+  &lt;span slot="text-1"&gt;ProfPowell&lt;/span&gt;
+  &lt;img slot="image-1" src="a.png" width="56" height="56" alt=""&gt;
+  &lt;img slot="image-2" src="b.png" width="56" height="56" alt=""&gt;
+  &lt;img slot="image-3" src="c.png" width="56" height="56" alt=""&gt;
+&lt;/canvas-text&gt;</code></pre>
+      <p><a href="./banner.html" target="_blank" rel="noopener">Open standalone &#8599;</a></p>
+    </section>
+
+    <!-- OG CARD -->
+    <section class="demo-section" id="demo-og-card">
+      <h2>OG / social share card</h2>
+      <p class="demo-description">No preset &mdash; just placement attributes. <code>place="center-left"</code> with <code>offset-x</code>/<code>offset-y</code> positions the title and subtitle over a photo.</p>
+      <div class="browser-window">
+        <div class="browser-window-bar">
+          <span class="browser-window-dots"><span class="r"></span><span class="y"></span><span class="g"></span></span>
+          <span class="browser-window-url">og-card.html</span>
+        </div>
+        <iframe src="./og-card.html" title="OG share card demo" loading="lazy" style="height: 620px"></iframe>
+      </div>
+      <h3>Source</h3>
+      <pre><code>&lt;canvas-text width="600" height="315"&gt;
+  &lt;img slot="background" src="hero.jpg" fit="cover" alt=""&gt;
+  &lt;div slot="text-1" place="center-left" offset-x="40" offset-y="-20"&gt;Shipping canvas-text 0.2&lt;/div&gt;
+  &lt;div slot="text-2" place="center-left" offset-x="40" offset-y="40"&gt;Placement, presets &amp; fonts&lt;/div&gt;
+&lt;/canvas-text&gt;</code></pre>
+      <p><a href="./og-card.html" target="_blank" rel="noopener">Open standalone &#8599;</a></p>
+    </section>
+
+    <!-- CAPTION -->
+    <section class="demo-section" id="demo-caption">
+      <h2>Caption / figure flattener</h2>
+      <p class="demo-description"><code>preset="caption"</code> flattens a semantic <code>&lt;figure&gt;</code> + <code>&lt;figcaption&gt;</code> into one image with a full-width caption band. The band color is the figcaption's own <code>background</code>.</p>
+      <div class="browser-window">
+        <div class="browser-window-bar">
+          <span class="browser-window-dots"><span class="r"></span><span class="y"></span><span class="g"></span></span>
+          <span class="browser-window-url">caption.html</span>
+        </div>
+        <iframe src="./caption.html" title="Caption flattener demo" loading="lazy" style="height: 620px"></iframe>
+      </div>
+      <h3>Source</h3>
+      <pre><code>&lt;canvas-text preset="caption" width="500" height="333"&gt;
+  &lt;figure&gt;
+    &lt;img src="photo.jpg" alt=""&gt;
+    &lt;figcaption style="background:rgba(0,0,0,.55);color:#fff;padding:10px"&gt;
+      A captioned figure, flattened to one image
+    &lt;/figcaption&gt;
+  &lt;/figure&gt;
+&lt;/canvas-text&gt;</code></pre>
+      <p><a href="./caption.html" target="_blank" rel="noopener">Open standalone &#8599;</a></p>
+    </section>
+
   </main>
 
   <footer class="site-footer">
