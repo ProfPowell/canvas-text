@@ -1,6 +1,6 @@
 import { wrapWithTheme } from './theme-bridge.js';
 
-const SLOT_RE = /^(background|text)(?:-(\d+))?$/;
+const SLOT_RE = /^(background|image|text)(?:-(\d+))?$/;
 
 export function collectLayers(host, internalCanvas) {
   const layers = [];
@@ -18,27 +18,31 @@ export function collectLayers(host, internalCanvas) {
     if (!m) continue;
     const [, kind, n] = m;
     if (kind === 'text' && !n) {
-      // `slot="text"` (without -N) is ambiguous. Skip with a warning.
       console.warn(`canvas-text: slot="text" requires a number suffix (text-1, text-2, ...). Got slot="${slot}"; layer ignored.`);
       continue;
     }
-    const z = kind === 'background' ? (n ? Number(n) : 0) : Number(n);
+    const place = child.getAttribute('place');
+    const offsetX = child.getAttribute('offset-x');
+    const offsetY = child.getAttribute('offset-y');
+    const fit = child.getAttribute('fit');
     if (kind === 'background') {
       const img = child.tagName === 'IMG' ? child : child.querySelector('img');
-      if (img) layers.push({ slot, z, kind: 'image', node: img });
+      if (img) {
+        layers.push({ slot, z: n ? Number(n) : 0, kind: 'image', isBackground: true, node: img, place, offsetX, offsetY, fit });
+      }
+    } else if (kind === 'image') {
+      const img = child.tagName === 'IMG' ? child : child.querySelector('img');
+      if (img) {
+        layers.push({ slot, z: Number(n), kind: 'image', isBackground: false, node: img, place, offsetX, offsetY, fit });
+      }
     } else {
-      layers.push({ slot, z, kind: 'text', node: child });
+      layers.push({ slot, z: Number(n), kind: 'text', node: child, place, offsetX, offsetY, fit });
     }
   }
   if (defaultParts.length) {
     const wrapper = document.createElement('div');
     for (const p of defaultParts) wrapper.appendChild(p.cloneNode(true));
-    layers.push({
-      slot: '(default)',
-      z: Number.POSITIVE_INFINITY,
-      kind: 'text',
-      node: wrapper,
-    });
+    layers.push({ slot: '(default)', z: Number.POSITIVE_INFINITY, kind: 'text', node: wrapper, place: null, offsetX: null, offsetY: null, fit: null });
   }
   layers.sort((a, b) => a.z - b.z || (a.kind === 'image' ? -1 : 1));
   return layers;
