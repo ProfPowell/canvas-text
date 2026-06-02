@@ -12,6 +12,7 @@ test('resolveAnchor maps names and aliases to fractions', async ({ page }) => {
       rightAlias: resolveAnchor('right'),
       missing: resolveAnchor(null),
       junk: resolveAnchor('nonsense'),
+      cl: resolveAnchor('center-left'),
     };
   });
   expect(r.center).toEqual({ ax: 0.5, ay: 0.5 });
@@ -21,6 +22,7 @@ test('resolveAnchor maps names and aliases to fractions', async ({ page }) => {
   expect(r.rightAlias).toEqual({ ax: 1, ay: 0.5 });
   expect(r.missing).toEqual({ ax: 0.5, ay: 0.5 });
   expect(r.junk).toEqual({ ax: 0.5, ay: 0.5 });
+  expect(r.cl).toEqual({ ax: 0, ay: 0.5 });
 });
 
 test('parseLength handles px, percent, and empty', async ({ page }) => {
