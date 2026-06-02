@@ -8,6 +8,7 @@ playwright-report
 # Editor / tooling
 .idea/
 .playwright-mcp/
+.superpowers/
 
 # Beads / Dolt files (added by bd init)
 .dolt/
