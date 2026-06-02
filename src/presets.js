@@ -72,5 +72,12 @@ function applyBadge(layers, dims) {
   autoRow(badges, { itemW: 44, gap: 16, offsetY: -Math.round(h * 0.08) });
 }
 
-function applyBanner(layers, dims) {} // eslint-disable-line no-unused-vars
+function applyBanner(layers, dims) {
+  const h = dims.height;
+  const bg = background(layers);
+  if (bg) fill(bg, 'fit', 'cover');
+  const ts = bySlotIndex(texts(layers));
+  if (ts[0]) { fill(ts[0], 'place', 'top'); fill(ts[0], 'offsetY', String(Math.round(h * 0.12))); }
+  autoRow(bySlotIndex(images(layers)), { itemW: 56, gap: 18, offsetY: -Math.round(h * 0.1) });
+}
 function applyCaption() {}

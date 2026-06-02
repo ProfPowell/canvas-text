@@ -94,3 +94,37 @@ test('badge preset: avatar centered top, name+title stacked, badges row at botto
   expect(r.mid).toBe(true);
   expect(r.right).toBe(true);
 });
+
+test('banner preset: name at top, badge row along the bottom, background covered', async ({ page }) => {
+  await page.goto('/test/test-page.html');
+  const r = await page.evaluate(async () => {
+    const el = document.createElement('canvas-text');
+    el.setAttribute('preset', 'banner');
+    el.setAttribute('width', '300');
+    el.setAttribute('height', '300');
+    el.innerHTML = `
+      <img slot="background" src="/test/fixtures/red-square.png" crossorigin="anonymous">
+      <span slot="text-1" style="color:white;font-size:28px;font-weight:bold">ProfPowell</span>
+      <img slot="image-1" src="/test/fixtures/blue-square.png" crossorigin="anonymous" width="48" height="48">
+      <img slot="image-2" src="/test/fixtures/blue-square.png" crossorigin="anonymous" width="48" height="48">
+      <img slot="image-3" src="/test/fixtures/blue-square.png" crossorigin="anonymous" width="48" height="48">`;
+    document.getElementById('harness').appendChild(el);
+    await new Promise((res) => el.addEventListener('canvas-text:rendered', res, { once: true }));
+    const c = el.getCanvas();
+    const ctx = c.getContext('2d');
+    const sampleBlue = (xFrac) => {
+      const d = ctx.getImageData((c.width * xFrac) | 0, (c.height * 0.85) | 0, 1, 1).data;
+      return d[2] > 150 && d[0] < 100;
+    };
+    const nameWhite = () => {
+      const d = ctx.getImageData(0, 0, c.width, (c.height * 0.3) | 0).data;
+      for (let i = 0; i < d.length; i += 4) if (d[i] > 230 && d[i+1] > 230 && d[i+2] > 230 && d[i+3] > 0) return true;
+      return false;
+    };
+    return { left: sampleBlue(0.28), mid: sampleBlue(0.5), right: sampleBlue(0.72), name: nameWhite() };
+  });
+  expect(r.name).toBe(true);
+  expect(r.left).toBe(true);
+  expect(r.mid).toBe(true);
+  expect(r.right).toBe(true);
+});
