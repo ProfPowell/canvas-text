@@ -108,3 +108,39 @@ test('imageDrawArgs: contain letterboxes inside box', async ({ page }) => {
   expect(a.sw).toBeCloseTo(200);
   expect(a.sh).toBeCloseTo(100);
 });
+
+test('textWrapperStyle: top-center', async ({ page }) => {
+  await page.goto('/test/test-page.html');
+  const css = await page.evaluate(async () => {
+    const { textWrapperStyle } = await import('/src/placement.js');
+    return textWrapperStyle({ ax: 0.5, ay: 0, offsetX: 0, offsetY: 16 });
+  });
+  expect(css).toContain('position:absolute');
+  expect(css).toContain('left:0');
+  expect(css).toContain('right:0');
+  expect(css).toContain('text-align:center');
+  expect(css).toContain('top:16px');
+  expect(css).not.toContain('bottom:');
+});
+
+test('textWrapperStyle: bottom-right with negative y becomes bottom offset', async ({ page }) => {
+  await page.goto('/test/test-page.html');
+  const css = await page.evaluate(async () => {
+    const { textWrapperStyle } = await import('/src/placement.js');
+    return textWrapperStyle({ ax: 1, ay: 1, offsetX: 0, offsetY: -16 });
+  });
+  expect(css).toContain('text-align:right');
+  expect(css).toContain('bottom:16px');
+  expect(css).not.toMatch(/(^|\s)top:/);
+});
+
+test('textWrapperStyle: vertical center uses translateY', async ({ page }) => {
+  await page.goto('/test/test-page.html');
+  const css = await page.evaluate(async () => {
+    const { textWrapperStyle } = await import('/src/placement.js');
+    return textWrapperStyle({ ax: 0, ay: 0.5, offsetX: 0, offsetY: 0 });
+  });
+  expect(css).toContain('text-align:left');
+  expect(css).toContain('top:50%');
+  expect(css).toContain('translateY(');
+});

@@ -64,3 +64,21 @@ export function imageDrawArgs({
     dx: boxX, dy: boxY, dw: boxW, dh: boxH,
   };
 }
+
+// CSS for a full-width positioned wrapper around a text layer.
+// Horizontal placement = text-align (ax); vertical placement = top/bottom (ay).
+export function textWrapperStyle({ ax, ay, offsetX, offsetY }) {
+  const align = ax === 0 ? 'left' : ax === 1 ? 'right' : 'center';
+  const decls = ['position:absolute', 'left:0', 'right:0', `text-align:${align}`];
+  if (ay === 0) {
+    decls.push(`top:${offsetY}px`);
+  } else if (ay === 1) {
+    decls.push(`bottom:${-offsetY}px`);
+  } else {
+    decls.push('top:50%', `transform:translateY(calc(-50% + ${offsetY}px))`);
+  }
+  if (offsetX) {
+    decls.push(`padding-${ax === 1 ? 'right' : 'left'}:${Math.abs(offsetX)}px`);
+  }
+  return decls.join('; ') + ';';
+}
