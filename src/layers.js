@@ -1,5 +1,5 @@
 import { wrapWithTheme } from './theme-bridge.js';
-import { resolveAnchor, parseLength, resolveImageBoxCss, imageDrawArgs } from './placement.js';
+import { resolveAnchor, parseLength, resolveImageBoxCss, imageDrawArgs, textWrapperStyle } from './placement.js';
 
 const SLOT_RE = /^(background|image|text)(?:-(\d+))?$/;
 
@@ -94,18 +94,33 @@ export async function paintLayer(ctx, layer, opts, renderTag, host, themeMode, o
       });
       ctx.drawImage(img, a.sx, a.sy, a.sw, a.sh, a.dx, a.dy, a.dw, a.dh);
     } else {
-      const themed = wrapWithTheme(layer.node.outerHTML, host, themeMode, layer.node);
-      // Pass the full target height so CSS positioning inside the layer (e.g.
-      // `position:absolute; bottom:20px`) resolves against the composed canvas
-      // size. Draw at natural size — no stretching, which would distort text.
-      const result = renderTag.render({
-        html: themed,
-        width,
-        height,
-        pixelRatio: dpr,
-        accuracy: opts.accuracy,
-      });
-      ctx.drawImage(result.canvas, 0, 0);
+      let themed = wrapWithTheme(layer.node.outerHTML, host, themeMode, layer.node);
+      if (layer.presetStyle) {
+        // Preset owns typography; skip the theme wrapper to avoid fighting stroke.
+        themed = `<div style="${layer.presetStyle}">${layer.node.outerHTML}</div>`;
+      }
+      const placed = layer.place != null || layer.offsetX != null || layer.offsetY != null || layer.presetStyle;
+      let html = themed;
+      let dy = 0;
+      if (placed) {
+        const { ax, ay } = resolveAnchor(layer.place);
+        const ox = parseLength(layer.offsetX, width);
+        const oy = parseLength(layer.offsetY, height);
+        html = `<div style="${textWrapperStyle({ ax, ay, offsetX: ox, offsetY: oy })}">${themed}</div>`;
+        if (ay !== 0) {
+          // render-tag ignores position/transform; measure natural text height
+          // then offset the draw call to achieve vertical placement.
+          const measured = renderTag.render({ html, width, pixelRatio: dpr, accuracy: opts.accuracy });
+          const textHpx = measured.canvas.height / dpr; // CSS px
+          if (ay === 1) {
+            dy = Math.max(0, height - textHpx + oy) * dpr;
+          } else {
+            dy = Math.max(0, (height - textHpx) / 2 + oy) * dpr;
+          }
+        }
+      }
+      const result = renderTag.render({ html, width, height, pixelRatio: dpr, accuracy: opts.accuracy });
+      ctx.drawImage(result.canvas, 0, dy);
     }
   } catch (error) {
     onError({ slot: layer.slot, error });
