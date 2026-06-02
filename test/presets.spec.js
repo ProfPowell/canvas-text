@@ -128,3 +128,33 @@ test('banner preset: name at top, badge row along the bottom, background covered
   expect(r.mid).toBe(true);
   expect(r.right).toBe(true);
 });
+
+test('caption preset flattens figure: image fills, figcaption is a bottom band', async ({ page }) => {
+  await page.goto('/test/test-page.html');
+  const r = await page.evaluate(async () => {
+    const el = document.createElement('canvas-text');
+    el.setAttribute('preset', 'caption');
+    el.setAttribute('width', '300');
+    el.setAttribute('height', '300');
+    el.innerHTML = `
+      <figure>
+        <img src="/test/fixtures/red-square.png" crossorigin="anonymous">
+        <figcaption style="background:rgba(0,0,0,0.6);color:white;font-size:24px;padding:8px">Hello</figcaption>
+      </figure>`;
+    document.getElementById('harness').appendChild(el);
+    await new Promise((res) => el.addEventListener('canvas-text:rendered', res, { once: true }));
+    const c = el.getCanvas();
+    const ctx = c.getContext('2d');
+    const top = ctx.getImageData((c.width*0.5)|0, (c.height*0.2)|0, 1, 1).data;
+    const bandLeft = ctx.getImageData(4, (c.height*0.92)|0, 1, 1).data;
+    const bandRight = ctx.getImageData(c.width-5, (c.height*0.92)|0, 1, 1).data;
+    return {
+      topRed: top[0] > 150 && top[2] < 100,
+      bandDarkLeft: bandLeft[0] < 160 && bandLeft[3] > 200,
+      bandDarkRight: bandRight[0] < 160 && bandRight[3] > 200,
+    };
+  });
+  expect(r.topRed).toBe(true);
+  expect(r.bandDarkLeft).toBe(true);
+  expect(r.bandDarkRight).toBe(true);
+});

@@ -1,7 +1,7 @@
 import * as renderTag from 'render-tag';
 import { wrapWithTheme } from './theme-bridge.js';
 import { collectLayers, paintLayer, backgroundImageRatio } from './layers.js';
-import { applyPresetToLayers } from './presets.js';
+import { applyPresetToLayers, captionLayers } from './presets.js';
 
 const OBSERVED = ['width', 'height', 'theme', 'lang', 'accuracy', 'dpr', 'format', 'compose', 'alt', 'preset'];
 
@@ -210,9 +210,14 @@ export class CanvasTextElement extends HTMLElement {
       ctx.drawImage(result.canvas, 0, 0, this.#canvas.width, this.#canvas.height);
     } else {
       // Layer pipeline (compose='slots' or any unrecognized value).
-      const layers = collectLayers(this, this.#canvas);
       const preset = this.getAttribute('preset');
-      if (preset) applyPresetToLayers(preset, layers, { width, height });
+      let layers;
+      if (preset === 'caption') {
+        layers = captionLayers(this) || collectLayers(this, this.#canvas);
+      } else {
+        layers = collectLayers(this, this.#canvas);
+        if (preset) applyPresetToLayers(preset, layers, { width, height });
+      }
       if (height == null) height = width;
       this.#sizeCanvas(width, height, dpr);
       const ctx = this.#canvas.getContext('2d');

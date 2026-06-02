@@ -81,3 +81,20 @@ function applyBanner(layers, dims) {
   autoRow(bySlotIndex(images(layers)), { itemW: 56, gap: 18, offsetY: -Math.round(h * 0.1) });
 }
 function applyCaption() {}
+
+// Synthesize layers for preset="caption" from a semantic <figure>.
+// Returns null if no usable figure is found (caller falls back to normal collection).
+export function captionLayers(host) {
+  const figure = host.querySelector('figure');
+  if (!figure) return null;
+  const img = figure.querySelector('img');
+  const cap = figure.querySelector('figcaption');
+  const layers = [];
+  if (img) {
+    layers.push({ slot: 'background', z: 0, kind: 'image', isBackground: true, node: img, place: null, offsetX: null, offsetY: null, fit: 'cover' });
+  }
+  if (cap) {
+    layers.push({ slot: 'text-1', z: 1, kind: 'text', node: cap, place: 'bottom', offsetX: null, offsetY: null, fit: null, presetStyle: 'display:block;width:100%;box-sizing:border-box;' });
+  }
+  return layers;
+}
