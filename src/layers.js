@@ -107,7 +107,10 @@ export async function paintLayer(ctx, layer, opts, renderTag, host, themeMode, o
         const ox = parseLength(layer.offsetX, width);
         const oy = parseLength(layer.offsetY, height);
         html = `<div style="${textWrapperStyle({ ax, ay, offsetX: ox, offsetY: oy })}">${themed}</div>`;
-        if (ay !== 0) {
+        if (ay === 0) {
+          // Top anchor: render-tag flows text from the top; apply offset-y directly.
+          dy = Math.max(0, oy) * dpr;
+        } else {
           // render-tag ignores position/transform; measure natural text height
           // then offset the draw call to achieve vertical placement.
           const measured = renderTag.render({ html, width, pixelRatio: dpr, accuracy: opts.accuracy });
