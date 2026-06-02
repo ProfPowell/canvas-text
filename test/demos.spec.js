@@ -23,7 +23,7 @@ for (const name of PAGES) {
 
 test('demos.html embeds all five standalone demos in browser-window frames', async ({ page }) => {
   await page.goto('/docs/demos.html', { waitUntil: 'domcontentloaded' });
-  const srcs = await page.$$eval('.browser-window iframe', (els) => els.map((e) => e.getAttribute('src')));
+  const srcs = await page.$$eval('browser-window', (els) => els.map((e) => e.getAttribute('src')));
   for (const name of ['./meme.html', './badge.html', './banner.html', './og-card.html', './caption.html']) {
     expect(srcs).toContain(name);
   }
@@ -49,6 +49,18 @@ test('index.html uses <code-block> for source (no raw pre/code)', async ({ page 
     hasImport: !!document.querySelector('script[src*="@profpowell/code-block"]'),
   }));
   expect(c.codeBlocks).toBeGreaterThanOrEqual(3);
+  expect(c.rawPre).toBe(0);
+  expect(c.hasImport).toBe(true);
+});
+
+test('api.html uses <code-block> for source (no raw pre/code)', async ({ page }) => {
+  await page.goto('/docs/api.html', { waitUntil: 'domcontentloaded' });
+  const c = await page.evaluate(() => ({
+    codeBlocks: document.querySelectorAll('code-block').length,
+    rawPre: document.querySelectorAll('pre').length,
+    hasImport: !!document.querySelector('script[src*="@profpowell/code-block"]'),
+  }));
+  expect(c.codeBlocks).toBeGreaterThanOrEqual(5);
   expect(c.rawPre).toBe(0);
   expect(c.hasImport).toBe(true);
 });

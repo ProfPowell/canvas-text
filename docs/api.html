@@ -10,6 +10,7 @@
     { "imports": { "render-tag": "https://esm.sh/render-tag@0.1.7" } }
   </script>
   <script type="module" src="./dist/canvas-text.js"></script>
+  <script type="module" src="https://esm.sh/@profpowell/code-block@2.9.0"></script>
 </head>
 <body>
   <header class="site-header">
@@ -183,13 +184,13 @@
       </table>
 
       <h3>Usage</h3>
-      <pre><code>const el = document.querySelector('canvas-text');
+      <code-block language="javascript">const el = document.querySelector('canvas-text');
 
 // Set content imperatively
 el.html = '&lt;strong&gt;Updated!&lt;/strong&gt;';
 
 // Read current unslotted HTML
-console.log(el.html);</code></pre>
+console.log(el.html);</code-block>
     </section>
 
     <!-- METHODS -->
@@ -230,9 +231,9 @@ console.log(el.html);</code></pre>
 
       <h3>Notes</h3>
       <p>Both <code>toDataURL()</code> and <code>toBlob()</code> reflect the canvas as of the last completed render. If you have just mutated attributes or slots:</p>
-      <pre><code>// Wait for the next render before exporting
+      <code-block language="javascript">// Wait for the next render before exporting
 await el.render();
-const blob = await el.toBlob('image/png');</code></pre>
+const blob = await el.toBlob('image/png');</code-block>
       <p>Cross-origin images without <code>crossorigin="anonymous"</code> will taint the canvas and cause <code>toBlob()</code> / <code>toDataURL()</code> to throw. The <code>canvas-text:layer-error</code> event fires for per-layer failures.</p>
     </section>
 
@@ -269,7 +270,7 @@ const blob = await el.toBlob('image/png');</code></pre>
       </table>
 
       <h3>Usage</h3>
-      <pre><code>const el = document.querySelector('canvas-text');
+      <code-block language="javascript">const el = document.querySelector('canvas-text');
 
 el.addEventListener('canvas-text:rendered', ({ detail }) =&gt; {
   console.log(`Rendered ${detail.width}x${detail.height} in ${detail.durationMs}ms`);
@@ -277,7 +278,7 @@ el.addEventListener('canvas-text:rendered', ({ detail }) =&gt; {
 
 el.addEventListener('canvas-text:layer-error', ({ detail }) =&gt; {
   console.warn(`Layer "${detail.slot}" failed:`, detail.error);
-});</code></pre>
+});</code-block>
     </section>
 
     <!-- THEME BRIDGE -->
@@ -393,11 +394,11 @@ el.addEventListener('canvas-text:layer-error', ({ detail }) =&gt; {
 
       <h3>font: shorthand caveat</h3>
       <p>The <code>font:</code> shorthand (e.g. <code>font: bold 48px Impact</code>) is <strong>not parsed</strong> by render-tag. Use the longhands <code>font-size</code>, <code>font-weight</code>, and <code>font-family</code> separately:</p>
-      <pre><code>&lt;!-- Wrong: shorthand silently fails --&gt;
+      <code-block language="html">&lt;!-- Wrong: shorthand silently fails --&gt;
 &lt;div style="font: bold 48px Impact;"&gt;TEXT&lt;/div&gt;
 
 &lt;!-- Correct: use longhands --&gt;
-&lt;div style="font-size: 48px; font-weight: bold; font-family: Impact, sans-serif;"&gt;TEXT&lt;/div&gt;</code></pre>
+&lt;div style="font-size: 48px; font-weight: bold; font-family: Impact, sans-serif;"&gt;TEXT&lt;/div&gt;</code-block>
     </section>
 
     <!-- ACCESSIBILITY -->
@@ -506,13 +507,13 @@ el.addEventListener('canvas-text:layer-error', ({ detail }) =&gt; {
 
       <p>New slot: <code>image-N</code> is a <strong>placed</strong> image (sized to itself), distinct from <code>background</code> (full-bleed). <code>background</code> now defaults to <code>fit="cover"</code> (was an unconditional stretch); pass <code>fit="fill"</code> for the old behavior.</p>
 
-      <pre><code>&lt;canvas-text width="600" height="600"&gt;
+      <code-block language="html">&lt;canvas-text width="600" height="600"&gt;
   &lt;img slot="background" src="banner.png" fit="cover"&gt;
   &lt;h2 slot="text-1" place="top-center" offset-y="40"&gt;ProfPowell&lt;/h2&gt;
   &lt;img slot="image-1" src="a.png" place="bottom-center" offset-x="-80" offset-y="-40"&gt;
   &lt;img slot="image-2" src="b.png" place="bottom-center"               offset-y="-40"&gt;
   &lt;img slot="image-3" src="c.png" place="bottom-center" offset-x="80"  offset-y="-40"&gt;
-&lt;/canvas-text&gt;</code></pre>
+&lt;/canvas-text&gt;</code-block>
     </section>
 
     <!-- PRESETS -->
