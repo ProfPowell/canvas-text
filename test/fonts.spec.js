@@ -1,30 +1,45 @@
 import { test, expect } from '@playwright/test';
 
-test('render waits for a deferred webfont so text uses it, not the fallback', async ({ page }) => {
+test('render blocks until document.fonts.ready resolves', async ({ page }) => {
   await page.goto('/test/test-page.html');
-  const differs = await page.evaluate(async () => {
-    async function renderWith(useFont) {
+  const result = await page.evaluate(async () => {
+    const realFonts = document.fonts;
+    let resolveReady;
+    const deferred = new Promise((r) => { resolveReady = r; });
+    // Stub document.fonts.ready with a promise we control.
+    Object.defineProperty(document, 'fonts', {
+      configurable: true,
+      value: { ready: deferred, add: realFonts.add.bind(realFonts) },
+    });
+    try {
+      let rendered = false;
       const el = document.createElement('canvas-text');
-      el.setAttribute('width', '300');
-      el.setAttribute('height', '120');
-      const fam = useFont ? 'CTWide, monospace' : 'monospace';
-      el.innerHTML = `<div slot="text-1" place="center" style="font-size:40px;color:black;font-family:${fam}">WIDETEXT</div>`;
+      el.setAttribute('width', '200');
+      el.setAttribute('height', '100');
+      el.innerHTML = `<div slot="text-1" place="center" style="color:black;font-size:24px">HI</div>`;
+      el.addEventListener('canvas-text:rendered', () => { rendered = true; });
       document.getElementById('harness').appendChild(el);
-      await new Promise((res) => el.addEventListener('canvas-text:rendered', res, { once: true }));
-      const c = el.getCanvas();
-      const d = c.getContext('2d').getImageData(0, 0, c.width, c.height).data;
-      let ink = 0; for (let i = 3; i < d.length; i += 4) if (d[i] > 0) ink++;
+
+      // Give render() time to reach the fonts.ready await. It must NOT have rendered yet.
+      await new Promise((r) => setTimeout(r, 60));
+      const renderedBeforeResolve = rendered;
+
+      // Now release fonts.ready and wait for the render to complete.
+      resolveReady();
+      await new Promise((res) => {
+        if (rendered) return res();
+        el.addEventListener('canvas-text:rendered', res, { once: true });
+      });
+      const renderedAfterResolve = rendered;
+
       document.getElementById('harness').removeChild(el);
-      return ink;
+      return { renderedBeforeResolve, renderedAfterResolve };
+    } finally {
+      Object.defineProperty(document, 'fonts', { configurable: true, value: realFonts });
     }
-    const ff = new FontFace('CTWide', 'local("Arial Black"), local("Impact"), local("Georgia")');
-    document.fonts.add(ff);
-    await ff.load().catch(() => {});
-    const withFont = await renderWith(true);
-    const baseline = await renderWith(false);
-    return Math.abs(withFont - baseline);
   });
-  expect(differs).toBeGreaterThan(0);
+  expect(result.renderedBeforeResolve).toBe(false); // blocked while fonts.ready pending
+  expect(result.renderedAfterResolve).toBe(true);    // proceeds once fonts.ready resolves
 });
 
 test('render still completes when document.fonts is unavailable (guard)', async ({ page }) => {
