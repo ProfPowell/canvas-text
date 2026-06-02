@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <title>canvas-text — Game banner</title>
   <script type="importmap">
-    { "imports": { "render-tag": "../node_modules/render-tag/lib/index.js" } }
+    { "imports": { "render-tag": "https://esm.sh/render-tag@0.1.7" } }
   </script>
   <script type="module" src="./dist/canvas-text.js"></script>
   <style>
@@ -15,23 +15,25 @@
   </style>
 </head>
 <body>
-  <h1>Game banner builder</h1>
-  <canvas-text preset="banner" width="480" height="270">
-    <img slot="background" src="https://picsum.photos/seed/bannerbg/480/270" crossorigin="anonymous" fit="cover">
-    <span slot="text-1" style="color:#fde68a;font-size:30px;font-weight:800;-webkit-text-stroke:1px #000">ProfPowell</span>
-    <img slot="image-1" id="s1" src="https://picsum.photos/seed/x1/64/64" crossorigin="anonymous" width="56" height="56">
-    <img slot="image-2" id="s2" src="https://picsum.photos/seed/x2/64/64" crossorigin="anonymous" width="56" height="56">
-    <img slot="image-3" id="s3" src="https://picsum.photos/seed/x3/64/64" crossorigin="anonymous" width="56" height="56">
-  </canvas-text>
-  <p>Pick badges (updates the three slots):</p>
-  <div class="tray" id="tray">
-    <img data-seed="a1" src="https://picsum.photos/seed/a1/64/64" crossorigin="anonymous">
-    <img data-seed="a2" src="https://picsum.photos/seed/a2/64/64" crossorigin="anonymous">
-    <img data-seed="a3" src="https://picsum.photos/seed/a3/64/64" crossorigin="anonymous">
-    <img data-seed="a4" src="https://picsum.photos/seed/a4/64/64" crossorigin="anonymous">
-    <img data-seed="a5" src="https://picsum.photos/seed/a5/64/64" crossorigin="anonymous">
-  </div>
-  <button id="dl">Download PNG</button>
+  <main>
+    <h1>Game banner builder</h1>
+    <canvas-text preset="banner" width="480" height="270">
+      <img slot="background" src="https://picsum.photos/seed/bannerbg/480/270" crossorigin="anonymous" fit="cover" alt="">
+      <span slot="text-1" style="color:#fde68a;font-size:30px;font-weight:800;-webkit-text-stroke:1px #000">ProfPowell</span>
+      <img slot="image-1" id="s1" src="https://picsum.photos/seed/x1/64/64" crossorigin="anonymous" width="56" height="56" alt="">
+      <img slot="image-2" id="s2" src="https://picsum.photos/seed/x2/64/64" crossorigin="anonymous" width="56" height="56" alt="">
+      <img slot="image-3" id="s3" src="https://picsum.photos/seed/x3/64/64" crossorigin="anonymous" width="56" height="56" alt="">
+    </canvas-text>
+    <p>Pick badges (updates the three slots):</p>
+    <div class="tray" id="tray">
+      <img data-seed="a1" src="https://picsum.photos/seed/a1/64/64" crossorigin="anonymous" alt="Badge option 1">
+      <img data-seed="a2" src="https://picsum.photos/seed/a2/64/64" crossorigin="anonymous" alt="Badge option 2">
+      <img data-seed="a3" src="https://picsum.photos/seed/a3/64/64" crossorigin="anonymous" alt="Badge option 3">
+      <img data-seed="a4" src="https://picsum.photos/seed/a4/64/64" crossorigin="anonymous" alt="Badge option 4">
+      <img data-seed="a5" src="https://picsum.photos/seed/a5/64/64" crossorigin="anonymous" alt="Badge option 5">
+    </div>
+    <button id="dl">Download PNG</button>
+  </main>
   <script type="module">
     const el = document.querySelector('canvas-text');
     const slots = ['s1','s2','s3'].map((id) => document.getElementById(id));

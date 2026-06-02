@@ -217,6 +217,48 @@ The slotted HTML stays in the light DOM, visually hidden via `clip-path`, so ass
 - No interactive editing (caret, selection).
 - Limited CSS surface inside layers (see above).
 
+## Placement (v0.2)
+
+Any layer accepts placement attributes:
+
+| Attribute | Values | Default |
+|---|---|---|
+| `place` | `top-left`…`bottom-right`, `center`, plus aliases `top`/`bottom`/`left`/`right` | `center` |
+| `offset-x` / `offset-y` | px (`40`) or % (`10%`); +x→right, +y→down | `0` |
+| `fit` | `cover` \| `contain` \| `fill` (images) | `cover` for `background`, `contain` for `image-N` |
+
+New slot: `image-N` is a **placed** image (sized to itself), distinct from
+`background` (full-bleed). `background` now defaults to `fit="cover"` (was an
+unconditional stretch); pass `fit="fill"` for the old behavior.
+
+```html
+<canvas-text width="600" height="600">
+  <img slot="background" src="banner.png" fit="cover">
+  <h2 slot="text-1" place="top-center" offset-y="40">ProfPowell</h2>
+  <img slot="image-1" src="a.png" place="bottom-center" offset-x="-80" offset-y="-40">
+  <img slot="image-2" src="b.png" place="bottom-center"               offset-y="-40">
+  <img slot="image-3" src="c.png" place="bottom-center" offset-x="80"  offset-y="-40">
+</canvas-text>
+```
+
+## Presets (v0.2)
+
+`preset="meme|badge|banner|caption"` applies sensible placement and typography
+defaults. Explicit per-layer attributes always win.
+
+- **meme** — Impact/Anton, white fill + black stroke, uppercase; `text-1`→top,
+  `text-2`→bottom.
+- **badge** — `image-1` avatar centered up top; `text-1`/`text-2` name/title;
+  extra `image-N` auto-arranged in a centered row.
+- **banner** — `text-1` name up top; all `image-N` in a centered bottom row.
+- **caption** — flattens a semantic `<figure><img><figcaption></figcaption></figure>`
+  into a full-width bottom caption band (the band background is the figcaption's
+  own `background-color`).
+
+Fonts: `<canvas-text>` waits for `document.fonts.ready` before drawing, so
+webfonts never render as fallback. Load OFL faces (e.g. Anton) yourself via
+`@font-face` / Google Fonts.
+
 ## Resources
 
 - **Live demos:** [profpowell.github.io/canvas-text](https://profpowell.github.io/canvas-text/)

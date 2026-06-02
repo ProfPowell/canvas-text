@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <title>canvas-text — Caption / figure flattener</title>
   <script type="importmap">
-    { "imports": { "render-tag": "../node_modules/render-tag/lib/index.js" } }
+    { "imports": { "render-tag": "https://esm.sh/render-tag@0.1.7" } }
   </script>
   <script type="module" src="./dist/canvas-text.js"></script>
   <style>
@@ -14,16 +14,18 @@
   </style>
 </head>
 <body>
-  <h1>Caption / figure flattener</h1>
-  <canvas-text preset="caption" width="500" height="333">
-    <figure>
-      <img src="https://picsum.photos/seed/capbg/500/333" crossorigin="anonymous">
-      <figcaption id="cap" style="background:rgba(0,0,0,0.55);color:#fff;font-size:22px;padding:10px;text-align:center">A captioned figure, flattened to one image</figcaption>
-    </figure>
-  </canvas-text>
-  <label>Caption <input type="text" id="capInput" value="A captioned figure, flattened to one image"></label>
-  <label><input type="checkbox" id="band" checked> Band background</label>
-  <button id="dl">Download PNG</button>
+  <main>
+    <h1>Caption / figure flattener</h1>
+    <canvas-text preset="caption" width="500" height="333">
+      <figure>
+        <img src="https://picsum.photos/seed/capbg/500/333" crossorigin="anonymous" alt="">
+        <figcaption id="cap" style="background:rgba(0,0,0,0.55);color:#fff;font-size:22px;padding:10px;text-align:center">A captioned figure, flattened to one image</figcaption>
+      </figure>
+    </canvas-text>
+    <label>Caption <input type="text" id="capInput" value="A captioned figure, flattened to one image"></label>
+    <label><input type="checkbox" id="band" checked> Band background</label>
+    <button id="dl">Download PNG</button>
+  </main>
   <script type="module">
     const el = document.querySelector('canvas-text');
     const cap = document.getElementById('cap');

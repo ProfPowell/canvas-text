@@ -472,6 +472,65 @@ el.addEventListener('canvas-text:layer-error', ({ detail }) =&gt; {
       <p><code>toDataURL</code> is synchronous; <code>toBlob</code> is async. Both read the current canvas pixels. If you've just mutated attributes or slots, the next render is queued on the upcoming animation frame — you need to <code>await el.render()</code> (or listen for <code>canvas-text:rendered</code>) before reading.</p>
     </section>
 
+    <!-- PLACEMENT -->
+    <section id="placement">
+      <h2>Placement (v0.2)</h2>
+      <p>Any layer accepts placement attributes to control its position within the canvas:</p>
+
+      <table class="api-table">
+        <thead>
+          <tr>
+            <th>Attribute</th>
+            <th>Values</th>
+            <th>Default</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>place</code></td>
+            <td><code>top-left</code> … <code>bottom-right</code>, <code>center</code>, plus aliases <code>top</code> / <code>bottom</code> / <code>left</code> / <code>right</code></td>
+            <td><code>center</code></td>
+          </tr>
+          <tr>
+            <td><code>offset-x</code> / <code>offset-y</code></td>
+            <td>px (<code>40</code>) or % (<code>10%</code>); +x→right, +y→down</td>
+            <td><code>0</code></td>
+          </tr>
+          <tr>
+            <td><code>fit</code></td>
+            <td><code>cover</code> | <code>contain</code> | <code>fill</code> (images only)</td>
+            <td><code>cover</code> for <code>background</code>; <code>contain</code> for <code>image-N</code></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>New slot: <code>image-N</code> is a <strong>placed</strong> image (sized to itself), distinct from <code>background</code> (full-bleed). <code>background</code> now defaults to <code>fit="cover"</code> (was an unconditional stretch); pass <code>fit="fill"</code> for the old behavior.</p>
+
+      <pre><code>&lt;canvas-text width="600" height="600"&gt;
+  &lt;img slot="background" src="banner.png" fit="cover"&gt;
+  &lt;h2 slot="text-1" place="top-center" offset-y="40"&gt;ProfPowell&lt;/h2&gt;
+  &lt;img slot="image-1" src="a.png" place="bottom-center" offset-x="-80" offset-y="-40"&gt;
+  &lt;img slot="image-2" src="b.png" place="bottom-center"               offset-y="-40"&gt;
+  &lt;img slot="image-3" src="c.png" place="bottom-center" offset-x="80"  offset-y="-40"&gt;
+&lt;/canvas-text&gt;</code></pre>
+    </section>
+
+    <!-- PRESETS -->
+    <section id="presets">
+      <h2>Presets (v0.2)</h2>
+      <p><code>preset="meme|badge|banner|caption"</code> applies sensible placement and typography defaults. Explicit per-layer attributes always win.</p>
+
+      <ul>
+        <li><strong>meme</strong> — Impact/Anton, white fill + black stroke, uppercase; <code>text-1</code>→top, <code>text-2</code>→bottom.</li>
+        <li><strong>badge</strong> — <code>image-1</code> avatar centered up top; <code>text-1</code>/<code>text-2</code> name/title; extra <code>image-N</code> auto-arranged in a centered row.</li>
+        <li><strong>banner</strong> — <code>text-1</code> name up top; all <code>image-N</code> in a centered bottom row.</li>
+        <li><strong>caption</strong> — flattens a semantic <code>&lt;figure&gt;&lt;img&gt;&lt;figcaption&gt;&lt;/figcaption&gt;&lt;/figure&gt;</code> into a full-width bottom caption band (the band background is the figcaption's own <code>background-color</code>).</li>
+      </ul>
+
+      <h3>Fonts</h3>
+      <p><code>&lt;canvas-text&gt;</code> waits for <code>document.fonts.ready</code> before drawing, so webfonts never render as fallback. Load OFL faces (e.g. Anton) yourself via <code>@font-face</code> / Google Fonts.</p>
+    </section>
+
     <!-- KNOWN LIMITATIONS -->
     <section>
       <h2>Known Limitations (v0.1)</h2>

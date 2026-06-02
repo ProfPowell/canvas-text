@@ -5,7 +5,7 @@
   <title>canvas-text — Meme generator</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&display=swap">
   <script type="importmap">
-    { "imports": { "render-tag": "../node_modules/render-tag/lib/index.js" } }
+    { "imports": { "render-tag": "https://esm.sh/render-tag@0.1.7" } }
   </script>
   <script type="module" src="./dist/canvas-text.js"></script>
   <style>
@@ -16,15 +16,17 @@
   </style>
 </head>
 <body>
-  <h1>Meme generator</h1>
-  <canvas-text preset="meme" width="500" height="500" style="font-family:Anton">
-    <img slot="background" src="https://picsum.photos/seed/canvastext/500/500" crossorigin="anonymous" fit="cover">
-    <span slot="text-1" id="top">WHEN THE CODE</span>
-    <span slot="text-2" id="bot">COMPILES FIRST TRY</span>
-  </canvas-text>
-  <label>Top text <input type="text" id="topInput" value="WHEN THE CODE"></label>
-  <label>Bottom text <input type="text" id="botInput" value="COMPILES FIRST TRY"></label>
-  <button id="dl">Download PNG</button>
+  <main>
+    <h1>Meme generator</h1>
+    <canvas-text preset="meme" width="500" height="500" style="font-family:Anton">
+      <img slot="background" src="https://picsum.photos/seed/canvastext/500/500" crossorigin="anonymous" fit="cover" alt="">
+      <span slot="text-1" id="top">WHEN THE CODE</span>
+      <span slot="text-2" id="bot">COMPILES FIRST TRY</span>
+    </canvas-text>
+    <label>Top text <input type="text" id="topInput" value="WHEN THE CODE"></label>
+    <label>Bottom text <input type="text" id="botInput" value="COMPILES FIRST TRY"></label>
+    <button id="dl">Download PNG</button>
+  </main>
   <script type="module">
     const el = document.querySelector('canvas-text');
     document.getElementById('topInput').addEventListener('input', (e) => { document.getElementById('top').textContent = e.target.value; });
@@ -37,4 +39,5 @@
     });
   </script>
 </body>
+
 </html>

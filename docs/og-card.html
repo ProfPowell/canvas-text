@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <title>canvas-text — OG / share card</title>
   <script type="importmap">
-    { "imports": { "render-tag": "../node_modules/render-tag/lib/index.js" } }
+    { "imports": { "render-tag": "https://esm.sh/render-tag@0.1.7" } }
   </script>
   <script type="module" src="./dist/canvas-text.js"></script>
   <style>
@@ -14,17 +14,19 @@
   </style>
 </head>
 <body>
-  <h1>OG / social share card</h1>
-  <canvas-text width="600" height="315">
-    <img slot="background" src="https://picsum.photos/seed/ogbg/600/315" crossorigin="anonymous" fit="cover">
-    <div slot="text-1" place="center-left" offset-x="40" offset-y="-20" id="title"
-         style="color:#fff;font-size:40px;font-weight:800;-webkit-text-stroke:1px #000;text-align:left">Shipping canvas-text 0.2</div>
-    <div slot="text-2" place="center-left" offset-x="40" offset-y="40" id="sub"
-         style="color:#e5e7eb;font-size:20px;text-align:left">Placement, presets &amp; fonts</div>
-  </canvas-text>
-  <label>Title <input type="text" id="titleInput" value="Shipping canvas-text 0.2"></label>
-  <label>Subtitle <input type="text" id="subInput" value="Placement, presets & fonts"></label>
-  <button id="dl">Download PNG</button>
+  <main>
+    <h1>OG / social share card</h1>
+    <canvas-text width="600" height="315">
+      <img slot="background" src="https://picsum.photos/seed/ogbg/600/315" crossorigin="anonymous" fit="cover" alt="">
+      <div slot="text-1" place="center-left" offset-x="40" offset-y="-20" id="title"
+           style="color:#fff;font-size:40px;font-weight:800;-webkit-text-stroke:1px #000;text-align:left">Shipping canvas-text 0.2</div>
+      <div slot="text-2" place="center-left" offset-x="40" offset-y="40" id="sub"
+           style="color:#e5e7eb;font-size:20px;text-align:left">Placement, presets &amp; fonts</div>
+    </canvas-text>
+    <label>Title <input type="text" id="titleInput" value="Shipping canvas-text 0.2"></label>
+    <label>Subtitle <input type="text" id="subInput" value="Placement, presets & fonts"></label>
+    <button id="dl">Download PNG</button>
+  </main>
   <script type="module">
     const el = document.querySelector('canvas-text');
     document.getElementById('titleInput').addEventListener('input', (e) => { document.getElementById('title').textContent = e.target.value; });
