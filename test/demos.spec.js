@@ -40,3 +40,15 @@ test('demos.html uses <code-block> for source (no raw pre/code)', async ({ page 
   expect(counts.rawPre).toBe(0);
   expect(counts.hasImport).toBe(true);
 });
+
+test('index.html uses <code-block> for source (no raw pre/code)', async ({ page }) => {
+  await page.goto('/docs/index.html', { waitUntil: 'domcontentloaded' });
+  const c = await page.evaluate(() => ({
+    codeBlocks: document.querySelectorAll('code-block').length,
+    rawPre: document.querySelectorAll('pre').length,
+    hasImport: !!document.querySelector('script[src*="@profpowell/code-block"]'),
+  }));
+  expect(c.codeBlocks).toBeGreaterThanOrEqual(3);
+  expect(c.rawPre).toBe(0);
+  expect(c.hasImport).toBe(true);
+});

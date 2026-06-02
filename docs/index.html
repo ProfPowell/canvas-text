@@ -10,6 +10,7 @@
     { "imports": { "render-tag": "https://esm.sh/render-tag@0.1.7" } }
   </script>
   <script type="module" src="./dist/canvas-text.js"></script>
+  <script type="module" src="https://esm.sh/@profpowell/code-block@2.9.0"></script>
 </head>
 <body>
   <header class="site-header">
@@ -92,22 +93,22 @@
 
       <h3>Installation</h3>
       <p>Install via npm:</p>
-      <pre><code>npm install @profpowell/canvas-text render-tag</code></pre>
+      <code-block language="bash">npm install @profpowell/canvas-text render-tag</code-block>
 
       <p><code>render-tag</code> is a peer dependency — add it alongside the component.</p>
 
       <h3>Basic Usage</h3>
-      <pre><code>&lt;script type="importmap"&gt;
+      <code-block language="html">&lt;script type="importmap"&gt;
   { "imports": { "render-tag": "https://esm.sh/render-tag@0.1.7" } }
 &lt;/script&gt;
 &lt;script type="module" src="https://unpkg.com/@profpowell/canvas-text"&gt;&lt;/script&gt;
 
 &lt;canvas-text width="600" compose="text-only"&gt;
   &lt;strong&gt;Hello&lt;/strong&gt; world
-&lt;/canvas-text&gt;</code></pre>
+&lt;/canvas-text&gt;</code-block>
 
       <h3>Layered (Meme) Usage</h3>
-      <pre><code>&lt;canvas-text width="500" height="500"&gt;
+      <code-block language="html">&lt;canvas-text width="500" height="500"&gt;
   &lt;img slot="background" src="doge.jpg" crossorigin="anonymous"&gt;
   &lt;div slot="text-1" style="text-align:center; font-size:48px;
                             font-weight:bold; color:white;
@@ -121,7 +122,7 @@
                             padding-top:400px;"&gt;
     BOTTOM TEXT
   &lt;/div&gt;
-&lt;/canvas-text&gt;</code></pre>
+&lt;/canvas-text&gt;</code-block>
 
       <div class="hero-actions" style="justify-content:flex-start; margin-top: 1.5rem;">
         <a href="demos.html" class="btn primary">See All Demos</a>
