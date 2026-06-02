@@ -174,6 +174,11 @@ export class CanvasTextElement extends HTMLElement {
     await Promise.resolve();
     if (token !== this.#renderToken) return;
 
+    if (typeof document !== 'undefined' && document.fonts && document.fonts.ready) {
+      await document.fonts.ready;
+      if (token !== this.#renderToken) return;
+    }
+
     const dpr = this.dpr;
     const width = this.width;
     const themeMode = this.getAttribute('theme') || 'inherit';
