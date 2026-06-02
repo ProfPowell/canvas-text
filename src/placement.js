@@ -25,3 +25,42 @@ export function parseLength(value, basis) {
   if (s.endsWith('%')) return Number.isFinite(basis) ? (n / 100) * basis : 0;
   return n;
 }
+
+// Box (CSS px) for a placed image: explicit attrs win; a single attr
+// preserves aspect ratio; otherwise natural size.
+export function resolveImageBoxCss({ natW, natH, attrW, attrH }) {
+  const haveW = Number.isFinite(attrW) && attrW > 0;
+  const haveH = Number.isFinite(attrH) && attrH > 0;
+  if (haveW && haveH) return { w: attrW, h: attrH };
+  if (haveW) return { w: attrW, h: natW ? (attrW * natH) / natW : attrW };
+  if (haveH) return { w: natH ? (attrH * natW) / natH : attrH, h: attrH };
+  return { w: natW, h: natH };
+}
+
+// Always returns the 9-arg drawImage form. All inputs/outputs in one space
+// (caller picks device or CSS px and stays consistent).
+export function imageDrawArgs({
+  natW, natH, boxW, boxH, fit, ax, ay, offsetX, offsetY, canvasW, canvasH,
+}) {
+  const boxX = ax * (canvasW - boxW) + offsetX;
+  const boxY = ay * (canvasH - boxH) + offsetY;
+
+  if (fit === 'fill') {
+    return { sx: 0, sy: 0, sw: natW, sh: natH, dx: boxX, dy: boxY, dw: boxW, dh: boxH };
+  }
+  if (fit === 'contain') {
+    const scale = Math.min(boxW / natW, boxH / natH);
+    const dw = natW * scale, dh = natH * scale;
+    return {
+      sx: 0, sy: 0, sw: natW, sh: natH,
+      dx: boxX + (boxW - dw) / 2, dy: boxY + (boxH - dh) / 2, dw, dh,
+    };
+  }
+  // cover: scale so box is fully covered, crop source rect centered.
+  const scale = Math.max(boxW / natW, boxH / natH);
+  const sw = boxW / scale, sh = boxH / scale;
+  return {
+    sx: (natW - sw) / 2, sy: (natH - sh) / 2, sw, sh,
+    dx: boxX, dy: boxY, dw: boxW, dh: boxH,
+  };
+}

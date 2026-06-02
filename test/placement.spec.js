@@ -43,3 +43,68 @@ test('parseLength handles px, percent, and empty', async ({ page }) => {
   expect(r.nul).toBe(0);
   expect(r.neg).toBe(-16);
 });
+
+test('resolveImageBoxCss derives box from attrs or natural size', async ({ page }) => {
+  await page.goto('/test/test-page.html');
+  const r = await page.evaluate(async () => {
+    const { resolveImageBoxCss } = await import('/src/placement.js');
+    return {
+      natural: resolveImageBoxCss({ natW: 200, natH: 100, attrW: null, attrH: null }),
+      both: resolveImageBoxCss({ natW: 200, natH: 100, attrW: 80, attrH: 40 }),
+      wOnly: resolveImageBoxCss({ natW: 200, natH: 100, attrW: 50, attrH: null }),
+      hOnly: resolveImageBoxCss({ natW: 200, natH: 100, attrW: null, attrH: 50 }),
+    };
+  });
+  expect(r.natural).toEqual({ w: 200, h: 100 });
+  expect(r.both).toEqual({ w: 80, h: 40 });
+  expect(r.wOnly).toEqual({ w: 50, h: 25 });
+  expect(r.hOnly).toEqual({ w: 100, h: 50 });
+});
+
+test('imageDrawArgs: fill stretches box, anchored top-left', async ({ page }) => {
+  await page.goto('/test/test-page.html');
+  const a = await page.evaluate(async () => {
+    const { imageDrawArgs } = await import('/src/placement.js');
+    return imageDrawArgs({
+      natW: 50, natH: 50, boxW: 100, boxH: 100, fit: 'fill',
+      ax: 0, ay: 0, offsetX: 0, offsetY: 0, canvasW: 400, canvasH: 400,
+    });
+  });
+  expect(a).toEqual({ sx: 0, sy: 0, sw: 50, sh: 50, dx: 0, dy: 0, dw: 100, dh: 100 });
+});
+
+test('imageDrawArgs: cover crops source, fills box; bottom-center anchor + offset', async ({ page }) => {
+  await page.goto('/test/test-page.html');
+  const a = await page.evaluate(async () => {
+    const { imageDrawArgs } = await import('/src/placement.js');
+    return imageDrawArgs({
+      natW: 200, natH: 100, boxW: 100, boxH: 100, fit: 'cover',
+      ax: 0.5, ay: 1, offsetX: 0, offsetY: -40, canvasW: 400, canvasH: 400,
+    });
+  });
+  expect(a.sx).toBeCloseTo(50);
+  expect(a.sy).toBeCloseTo(0);
+  expect(a.sw).toBeCloseTo(100);
+  expect(a.sh).toBeCloseTo(100);
+  expect(a.dx).toBeCloseTo(150);
+  expect(a.dy).toBeCloseTo(260);
+  expect(a.dw).toBeCloseTo(100);
+  expect(a.dh).toBeCloseTo(100);
+});
+
+test('imageDrawArgs: contain letterboxes inside box', async ({ page }) => {
+  await page.goto('/test/test-page.html');
+  const a = await page.evaluate(async () => {
+    const { imageDrawArgs } = await import('/src/placement.js');
+    return imageDrawArgs({
+      natW: 200, natH: 100, boxW: 100, boxH: 100, fit: 'contain',
+      ax: 0, ay: 0, offsetX: 0, offsetY: 0, canvasW: 400, canvasH: 400,
+    });
+  });
+  expect(a.dw).toBeCloseTo(100);
+  expect(a.dh).toBeCloseTo(50);
+  expect(a.dx).toBeCloseTo(0);
+  expect(a.dy).toBeCloseTo(25);
+  expect(a.sw).toBeCloseTo(200);
+  expect(a.sh).toBeCloseTo(100);
+});
