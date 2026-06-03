@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
   <title>canvas-text - Layered Canvas Compositing Web Component</title>
   <meta name="description" content="A lightweight web component that rasterizes layered rich text and images onto a canvas. Perfect for memes, OG cards, and sticker tools.">
   <link rel="stylesheet" href="https://unpkg.com/vanilla-breeze@0.1.4/dist/cdn/vanilla-breeze.css">
@@ -10,6 +11,7 @@
   <script type="importmap">
     { "imports": { "render-tag": "https://esm.sh/render-tag@0.1.7" } }
   </script>
+  <script type="module" src="https://unpkg.com/vanilla-breeze@0.1.4/dist/cdn/vanilla-breeze.js"></script>
   <script type="module" src="./dist/canvas-text.js"></script>
   <script type="module" src="https://esm.sh/@profpowell/code-block@2.9.0"></script>
 </head>
@@ -21,7 +23,7 @@
       <a href="demos.html">Demos</a>
       <a href="api.html">API</a>
       <a href="https://github.com/ProfPowell/canvas-text">GitHub</a>
-      <button type="button" id="mode-toggle" aria-label="Toggle dark mode">🌓</button>
+      <theme-picker compact></theme-picker>
     </nav>
   </header>
 
@@ -167,6 +169,5 @@
     <p>MIT License &middot; <a href="https://github.com/ProfPowell/canvas-text">View on GitHub</a> &middot; Powered by <a href="https://www.npmjs.com/package/render-tag">render-tag</a></p>
   </footer>
 
-  <script src="./site.js"></script>
 </body>
 </html>
