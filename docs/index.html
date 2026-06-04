@@ -24,26 +24,34 @@
   <meta name="color-scheme" content="light dark">
   <title>canvas-text - Layered Canvas Compositing Web Component</title>
   <meta name="description" content="A lightweight web component that rasterizes layered rich text and images onto a canvas. Perfect for memes, OG cards, and sticker tools.">
+  <link rel="stylesheet" href="./site.css">
   <script type="importmap">
     { "imports": { "render-tag": "https://esm.sh/render-tag@0.1.7" } }
   </script>
 </head>
 <body>
-  <header>
-    <nav>
-      <a href="index.html">&lt;canvas-text&gt;</a>
-      <a href="index.html" aria-current="page">Home</a>
-      <a href="demos.html">Demos</a>
-      <a href="api.html">API</a>
-      <a href="https://github.com/ProfPowell/canvas-text">GitHub</a>
-      <theme-picker compact></theme-picker>
+  <header class="site" data-sticky data-layout="cluster" data-layout-justify="between" data-layout-gap="m">
+    <a href="./index.html" class="brand"><strong>&lt;canvas-text&gt;</strong></a>
+    <nav class="horizontal pills" aria-label="Site">
+      <ul>
+        <li><a href="./index.html" aria-current="page">Home</a></li>
+        <li><a href="./demos.html">Demos</a></li>
+        <li><a href="./api.html">API</a></li>
+        <li><a href="https://github.com/ProfPowell/canvas-text" target="_blank" rel="noopener">GitHub</a></li>
+      </ul>
     </nav>
+    <theme-picker compact>
+      <button type="button" data-trigger class="ghost">
+        <icon-wc name="palette" size="sm"></icon-wc>
+        Theme
+      </button>
+    </theme-picker>
   </header>
 
-  <main data-layout="stack">
-    <section data-layout="stack">
+  <main class="content">
+    <header class="page-head">
       <h1>&lt;canvas-text&gt;</h1>
-      <p>A lightweight web component that rasterizes layered rich text and images onto a canvas. Perfect for memes, OG cards, and sticker tools.</p>
+      <p class="muted">A lightweight web component that rasterizes layered rich text and images onto a canvas. Perfect for memes, OG cards, and sticker tools.</p>
 
       <figure>
         <canvas-text width="500" height="160" compose="text-only">
@@ -57,46 +65,46 @@
         <a href="demos.html">View Demos</a>
         <a href="api.html">API Documentation</a>
       </div>
-    </section>
+    </header>
 
     <section>
       <h2>Features</h2>
-      <ul data-layout="grid">
+      <ul class="cards">
         <li>
-          <a href="demos.html#layered">
-            <h3>Layered Compositing</h3>
+          <article class="card">
+            <h3><a href="demos.html#layered">Layered Compositing</a></h3>
             <p>Z-ordered image and text slots. Stack backgrounds and text layers in any order with the simple slot grammar.</p>
-          </a>
+          </article>
         </li>
         <li>
-          <a href="demos.html#layered">
-            <h3>Meme-Ready</h3>
+          <article class="card">
+            <h3><a href="demos.html#layered">Meme-Ready</a></h3>
             <p>Slot grammar designed for top/bottom text over a background image. <code>slot="background"</code>, <code>slot="text-1"</code>, <code>slot="text-2"</code>.</p>
-          </a>
+          </article>
         </li>
         <li>
-          <a href="demos.html#theme-bridge">
-            <h3>Theme Bridge</h3>
+          <article class="card">
+            <h3><a href="demos.html#theme-bridge">Theme Bridge</a></h3>
             <p><code>theme="inherit"</code> picks up surrounding CSS tokens — color, font-family, font-size — so the canvas matches your design system automatically.</p>
-          </a>
+          </article>
         </li>
         <li>
-          <a href="demos.html#export">
-            <h3>Export to Image</h3>
+          <article class="card">
+            <h3><a href="demos.html#export">Export to Image</a></h3>
             <p><code>toBlob()</code> and <code>toDataURL()</code> produce PNG, JPEG, or WebP. Download a rendered meme or upload an OG card in a single call.</p>
-          </a>
+          </article>
         </li>
         <li>
-          <a href="demos.html#dynamic">
-            <h3>Reactive</h3>
+          <article class="card">
+            <h3><a href="demos.html#dynamic">Reactive</a></h3>
             <p>Slot and attribute mutations auto-trigger a coalesced re-render via <code>MutationObserver</code> and <code>requestAnimationFrame</code>.</p>
-          </a>
+          </article>
         </li>
         <li>
-          <a href="demos.html#a11y">
-            <h3>Accessible</h3>
+          <article class="card">
+            <h3><a href="demos.html#a11y">Accessible</a></h3>
             <p>Slotted HTML stays in the light DOM, visually hidden so screen readers consume it as normal text. Canvas is <code>aria-hidden</code>.</p>
-          </a>
+          </article>
         </li>
       </ul>
     </section>
@@ -149,32 +157,40 @@
 &lt;/canvas-text&gt;</code-block>
 
       <div data-layout="cluster">
-        <a href="demos.html">See All Demos</a>
-        <a href="api.html">Full API Reference</a>
+        <a href="./demos.html">See All Demos</a>
+        <a href="./api.html">Full API Reference</a>
       </div>
     </section>
 
     <section>
       <h2>Related Components</h2>
-      <p>Part of the ProfPowell vanilla web components suite:</p>
-      <nav data-layout="grid">
-        <a href="https://profpowell.github.io/code-block/">
-          <strong>&lt;code-block&gt;</strong>
-          <span>Syntax-highlighted code blocks</span>
-        </a>
-        <a href="https://profpowell.github.io/browser-window/">
-          <strong>&lt;browser-window&gt;</strong>
-          <span>Safari-style browser window frames</span>
-        </a>
-        <a href="https://profpowell.github.io/terminal-window/">
-          <strong>&lt;terminal-window&gt;</strong>
-          <span>Interactive terminal emulator</span>
-        </a>
-        <a href="https://profpowell.github.io/screen-saver/">
-          <strong>&lt;screen-saver&gt;</strong>
-          <span>Animated screensaver component</span>
-        </a>
-      </nav>
+      <p class="muted">Part of the ProfPowell vanilla web components suite:</p>
+      <ul class="cards">
+        <li>
+          <article class="card">
+            <h3><a href="https://profpowell.github.io/code-block/">&lt;code-block&gt;</a></h3>
+            <p>Syntax-highlighted code blocks</p>
+          </article>
+        </li>
+        <li>
+          <article class="card">
+            <h3><a href="https://profpowell.github.io/browser-window/">&lt;browser-window&gt;</a></h3>
+            <p>Safari-style browser window frames</p>
+          </article>
+        </li>
+        <li>
+          <article class="card">
+            <h3><a href="https://profpowell.github.io/terminal-window/">&lt;terminal-window&gt;</a></h3>
+            <p>Interactive terminal emulator</p>
+          </article>
+        </li>
+        <li>
+          <article class="card">
+            <h3><a href="https://profpowell.github.io/screen-saver/">&lt;screen-saver&gt;</a></h3>
+            <p>Animated screensaver component</p>
+          </article>
+        </li>
+      </ul>
     </section>
   </main>
 

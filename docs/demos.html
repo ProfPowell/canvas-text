@@ -24,25 +24,35 @@
   <meta name="color-scheme" content="light dark">
   <title>Demos - canvas-text Web Component</title>
   <meta name="description" content="Interactive examples and live demos of the canvas-text web component">
+  <link rel="stylesheet" href="./site.css">
   <script type="importmap">
     { "imports": { "render-tag": "https://esm.sh/render-tag@0.1.7" } }
   </script>
 </head>
 <body>
-  <header>
-    <nav>
-      <a href="index.html">&lt;canvas-text&gt;</a>
-      <a href="index.html">Home</a>
-      <a href="demos.html" aria-current="page">Demos</a>
-      <a href="api.html">API</a>
-      <a href="https://github.com/ProfPowell/canvas-text">GitHub</a>
-      <theme-picker compact></theme-picker>
+  <header class="site" data-sticky data-layout="cluster" data-layout-justify="between" data-layout-gap="m">
+    <a href="./index.html" class="brand"><strong>&lt;canvas-text&gt;</strong></a>
+    <nav class="horizontal pills" aria-label="Site">
+      <ul>
+        <li><a href="./index.html">Home</a></li>
+        <li><a href="./demos.html" aria-current="page">Demos</a></li>
+        <li><a href="./api.html">API</a></li>
+        <li><a href="https://github.com/ProfPowell/canvas-text" target="_blank" rel="noopener">GitHub</a></li>
+      </ul>
     </nav>
+    <theme-picker compact>
+      <button type="button" data-trigger class="ghost">
+        <icon-wc name="palette" size="sm"></icon-wc>
+        Theme
+      </button>
+    </theme-picker>
   </header>
 
-  <main data-layout="stack">
-    <h1>Interactive Demos</h1>
-    <p>Live examples of <code>&lt;canvas-text&gt;</code>. Each section shows the markup alongside the rendered canvas. The building blocks come first; the real-world demos at the end are embedded live &mdash; type, pick, and download right in the frame.</p>
+  <main class="content">
+    <header class="page-head">
+      <h1>Interactive Demos</h1>
+      <p class="muted">Live examples of <code>&lt;canvas-text&gt;</code>. Each section shows the markup alongside the rendered canvas. The building blocks come first; the real-world demos at the end are embedded live &mdash; type, pick, and download right in the frame.</p>
+    </header>
 
     <!-- TEXT ONLY -->
     <section id="text-only">
