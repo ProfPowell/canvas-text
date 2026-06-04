@@ -1,19 +1,32 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="classic">
 <head>
+  <script>
+    (() => {
+      const vb = new URL('../vb', document.baseURI).href.replace(/\/$/, '');
+      window.__VB_THEME_BASE = vb;
+      window.__VB_CATALOG_BASE = vb;
+      document.documentElement.dataset.iconPath = vb + '/icons';
+      // Seed VB's localStorage with classic brand so M.init() applies it.
+      // VB stores: { data: <state>, timestamp: <ms> } at key 'vb:theme:current'.
+      // Without a seed, brand defaults to "default" which wipes data-theme="classic".
+      // Only seed on first visit (don't override a user's saved preference).
+      try {
+        const key = 'vb:theme:current';
+        if (!localStorage.getItem(key)) {
+          localStorage.setItem(key, JSON.stringify({ data: { brand: 'classic' }, timestamp: Date.now() }));
+        }
+      } catch (_) {}
+    })();
+  </script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="color-scheme" content="light dark">
   <title>canvas-text - Layered Canvas Compositing Web Component</title>
   <meta name="description" content="A lightweight web component that rasterizes layered rich text and images onto a canvas. Perfect for memes, OG cards, and sticker tools.">
-  <link rel="stylesheet" href="https://unpkg.com/vanilla-breeze@0.1.4/dist/cdn/vanilla-breeze.css">
-  <link rel="stylesheet" href="https://unpkg.com/vanilla-breeze@0.1.4/dist/cdn/themes/classic.css">
   <script type="importmap">
     { "imports": { "render-tag": "https://esm.sh/render-tag@0.1.7" } }
   </script>
-  <script type="module" src="https://unpkg.com/vanilla-breeze@0.1.4/dist/cdn/vanilla-breeze.js"></script>
-  <script type="module" src="./dist/canvas-text.js"></script>
-  <script type="module" src="https://esm.sh/@profpowell/code-block@2.9.0"></script>
 </head>
 <body>
   <header>
@@ -169,5 +182,6 @@
     <p>MIT License &middot; <a href="https://github.com/ProfPowell/canvas-text">View on GitHub</a> &middot; Powered by <a href="https://www.npmjs.com/package/render-tag">render-tag</a></p>
   </footer>
 
+  <script type="module" src="./docs-entry.js"></script>
 </body>
 </html>

@@ -34,7 +34,10 @@
     "lint:fix": "eslint src/ --fix",
     "format": "prettier --write \"src/**/*.js\" \"test/**/*.js\"",
     "format:check": "prettier --check \"src/**/*.js\" \"test/**/*.js\"",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build",
+    "site:dev": "vite --config vite.site.config.js",
+    "site:build": "npm run build && vite build --config vite.site.config.js",
+    "site:preview": "vite preview --config vite.site.config.js"
   },
   "keywords": [
     "web-component",
@@ -61,10 +64,13 @@
     "@axe-core/playwright": "^4.10.0",
     "@eslint/js": "^9.0.0",
     "@playwright/test": "^1.57.0",
+    "@profpowell/browser-window": "^1.4.7",
+    "@profpowell/code-block": "^2.9.0",
     "eslint": "^9.0.0",
     "pngjs": "^7.0.0",
     "prettier": "^3.0.0",
     "render-tag": "^0.1.7",
+    "vanilla-breeze": "^0.1.4",
     "vite": "^6.0.0"
   }
 }
