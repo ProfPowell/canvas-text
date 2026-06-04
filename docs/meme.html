@@ -1,13 +1,27 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="classic">
 <head>
+  <script>
+    (() => {
+      const vb = new URL('../vb', document.baseURI).href.replace(/\/$/, '');
+      window.__VB_THEME_BASE = vb;
+      window.__VB_CATALOG_BASE = vb;
+      document.documentElement.dataset.iconPath = vb + '/icons';
+      try {
+        const key = 'vb:theme:current';
+        if (!localStorage.getItem(key)) {
+          localStorage.setItem(key, JSON.stringify({ data: { brand: 'classic' }, timestamp: Date.now() }));
+        }
+      } catch (_) {}
+    })();
+  </script>
   <meta charset="utf-8">
+  <meta name="color-scheme" content="light dark">
   <title>canvas-text — Meme generator</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&display=swap">
   <script type="importmap">
     { "imports": { "render-tag": "https://esm.sh/render-tag@0.1.7" } }
   </script>
-  <script type="module" src="./dist/canvas-text.js"></script>
   <style>
     body { font-family: system-ui, sans-serif; max-width: 640px; margin: 2rem auto; padding: 0 1rem; }
     canvas-text { border: 1px solid #ccc; }
@@ -38,6 +52,6 @@
       URL.revokeObjectURL(a.href);
     });
   </script>
+  <script type="module" src="./docs-entry.js"></script>
 </body>
-
 </html>

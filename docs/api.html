@@ -1,34 +1,48 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="classic">
 <head>
+  <script>
+    (() => {
+      const vb = new URL('../vb', document.baseURI).href.replace(/\/$/, '');
+      window.__VB_THEME_BASE = vb;
+      window.__VB_CATALOG_BASE = vb;
+      document.documentElement.dataset.iconPath = vb + '/icons';
+      // Seed VB's localStorage with classic brand so M.init() applies it.
+      // VB stores: { data: <state>, timestamp: <ms> } at key 'vb:theme:current'.
+      // Without a seed, brand defaults to "default" which wipes data-theme="classic".
+      // Only seed on first visit (don't override a user's saved preference).
+      try {
+        const key = 'vb:theme:current';
+        if (!localStorage.getItem(key)) {
+          localStorage.setItem(key, JSON.stringify({ data: { brand: 'classic' }, timestamp: Date.now() }));
+        }
+      } catch (_) {}
+    })();
+  </script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
   <title>API Reference - canvas-text Web Component</title>
   <meta name="description" content="Complete API documentation for the canvas-text web component">
-  <link rel="stylesheet" href="./styles.css">
   <script type="importmap">
     { "imports": { "render-tag": "https://esm.sh/render-tag@0.1.7" } }
   </script>
-  <script type="module" src="./dist/canvas-text.js"></script>
-  <script type="module" src="https://esm.sh/@profpowell/code-block@2.9.0"></script>
 </head>
 <body>
-  <header class="site-header">
+  <header>
     <nav>
-      <a href="index.html" class="nav-brand">&lt;canvas-text&gt;</a>
-      <div class="nav-links">
-        <a href="index.html">Home</a>
-        <a href="demos.html">Demos</a>
-        <a href="api.html" class="active">API</a>
-        <a href="https://github.com/ProfPowell/canvas-text">GitHub</a>
-        <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme">&#127763;</button>
-      </div>
+      <a href="index.html">&lt;canvas-text&gt;</a>
+      <a href="index.html">Home</a>
+      <a href="demos.html">Demos</a>
+      <a href="api.html" aria-current="page">API</a>
+      <a href="https://github.com/ProfPowell/canvas-text">GitHub</a>
+      <theme-picker compact></theme-picker>
     </nav>
   </header>
 
-  <main>
+  <main data-layout="stack">
     <h1>API Reference</h1>
-    <p class="demo-description">Complete documentation for the <code>&lt;canvas-text&gt;</code> custom element.</p>
+    <p>Complete documentation for the <code>&lt;canvas-text&gt;</code> custom element.</p>
 
     <!-- ELEMENT OVERVIEW -->
     <section>
@@ -43,7 +57,7 @@
       <h2>Slot Grammar</h2>
       <p>Children are identified by their <code>slot</code> attribute. Each slot maps to a z-order position in the composite stack. See <a href="demos.html#layered">Layered demo</a> and <a href="demos.html#z-order">Z-order demo</a>.</p>
 
-      <table class="api-table">
+      <table>
         <thead>
           <tr>
             <th>Slot</th>
@@ -89,7 +103,7 @@
       <h2>Attributes</h2>
       <p>All attributes are observed; mutations trigger a coalesced re-render.</p>
 
-      <table class="api-table">
+      <table>
         <thead>
           <tr>
             <th>Attribute</th>
@@ -161,7 +175,7 @@
     <section>
       <h2>Properties</h2>
 
-      <table class="api-table">
+      <table>
         <thead>
           <tr>
             <th>Property</th>
@@ -197,7 +211,7 @@ console.log(el.html);</code-block>
     <section>
       <h2>Methods</h2>
 
-      <table class="api-table">
+      <table>
         <thead>
           <tr>
             <th>Method</th>
@@ -242,7 +256,7 @@ const blob = await el.toBlob('image/png');</code-block>
       <h2>Events</h2>
       <p>All events bubble and are dispatched on the <code>&lt;canvas-text&gt;</code> element.</p>
 
-      <table class="api-table">
+      <table>
         <thead>
           <tr>
             <th>Event</th>
@@ -289,7 +303,7 @@ el.addEventListener('canvas-text:layer-error', ({ detail }) =&gt; {
       <p>The bridge runs once per render. Theme changes after first render are not re-applied in v0.1 — re-render is triggered by attribute/slot mutations, not by CSS changes.</p>
 
       <h3>Allowlist</h3>
-      <table class="api-table">
+      <table>
         <thead>
           <tr>
             <th>CSS property</th>
@@ -310,7 +324,7 @@ el.addEventListener('canvas-text:layer-error', ({ detail }) =&gt; {
       </table>
 
       <h3>Modes</h3>
-      <table class="api-table">
+      <table>
         <thead>
           <tr>
             <th>Value</th>
@@ -342,7 +356,7 @@ el.addEventListener('canvas-text:layer-error', ({ detail }) =&gt; {
       <p>Text layers are rasterized by render-tag, which implements a <strong>limited CSS surface</strong> — it is a layout/raster engine, not a full browser. Authors who try to use unsupported properties will get no effect or unexpected layout.</p>
 
       <h3>Supported</h3>
-      <table class="api-table">
+      <table>
         <thead>
           <tr><th>Property</th><th>Notes</th></tr>
         </thead>
@@ -364,7 +378,7 @@ el.addEventListener('canvas-text:layer-error', ({ detail }) =&gt; {
       </table>
 
       <h3>Not Supported</h3>
-      <table class="api-table">
+      <table>
         <thead>
           <tr><th>Property</th><th>Workaround</th></tr>
         </thead>
@@ -407,7 +421,7 @@ el.addEventListener('canvas-text:layer-error', ({ detail }) =&gt; {
       <p>The slotted HTML stays in the light DOM, visually hidden via <code>clip-path: inset(50%)</code>, so screen readers consume it as normal HTML. The canvas element is marked <code>aria-hidden="true"</code>.</p>
 
       <h3>Behavior with and without alt</h3>
-      <table class="api-table">
+      <table>
         <thead>
           <tr><th>alt set?</th><th>AT behavior</th></tr>
         </thead>
@@ -436,7 +450,7 @@ el.addEventListener('canvas-text:layer-error', ({ detail }) =&gt; {
 
       <p>In short: you don't have to set <code>theme="none"</code> on stylized meme layers — the bridge handles it for you.</p>
 
-      <table class="api-table">
+      <table>
         <thead>
           <tr><th>Layer pattern</th><th>Bridge behavior under <code>theme="inherit"</code></th></tr>
         </thead>
@@ -478,7 +492,7 @@ el.addEventListener('canvas-text:layer-error', ({ detail }) =&gt; {
       <h2>Placement (v0.2)</h2>
       <p>Any layer accepts placement attributes to control its position within the canvas:</p>
 
-      <table class="api-table">
+      <table>
         <thead>
           <tr>
             <th>Attribute</th>
@@ -546,19 +560,10 @@ el.addEventListener('canvas-text:layer-error', ({ detail }) =&gt; {
     </section>
   </main>
 
-  <footer class="site-footer">
+  <footer>
     <p>MIT License &middot; <a href="https://github.com/ProfPowell/canvas-text">View on GitHub</a> &middot; Powered by <a href="https://www.npmjs.com/package/render-tag">render-tag</a></p>
   </footer>
 
-  <script>
-    function toggleTheme() {
-      document.body.classList.toggle('dark');
-      localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
-    }
-
-    if (localStorage.getItem('theme') === 'dark') {
-      document.body.classList.add('dark');
-    }
-  </script>
+  <script type="module" src="./docs-entry.js"></script>
 </body>
 </html>
