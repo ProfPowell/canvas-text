@@ -30,9 +30,6 @@ jobs:
       - name: Build site (bundles vanilla-breeze + components)
         run: npm run site:build
 
-      - name: Add root redirect to /docs
-        run: printf '%s' '<!doctype html><meta charset="utf-8"><meta http-equiv="refresh" content="0; url=./docs/index.html"><link rel="canonical" href="./docs/index.html"><title>canvas-text</title><a href="./docs/index.html">canvas-text documentation</a>' > dist-site/index.html
-
       - uses: actions/configure-pages@v6
 
       - uses: actions/upload-pages-artifact@v3

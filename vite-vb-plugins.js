@@ -68,8 +68,8 @@ function makeVbAssetsPlugin() {
     },
     configureServer(server) {
       server.middlewares.use((req, res, next) => {
-        const t = req.url && req.url.match(/^\/vb\/themes\/([\w-]+\.css)(?:\?.*)?$/);
-        const i = req.url && req.url.match(/^\/vb\/icons\/([\w-]+)\/([\w-]+\.svg)(?:\?.*)?$/);
+        const t = req.url && req.url.match(/\/vb\/themes\/([\w-]+\.css)(?:\?.*)?$/);
+        const i = req.url && req.url.match(/\/vb\/icons\/([\w-]+)\/([\w-]+\.svg)(?:\?.*)?$/);
         try {
           if (t) {
             res.setHeader('Content-Type', 'text/css');

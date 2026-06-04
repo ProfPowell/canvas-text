@@ -3,7 +3,7 @@
 <head>
   <script>
     (() => {
-      const vb = new URL('../vb', document.baseURI).href.replace(/\/$/, '');
+      const vb = new URL('./vb', document.baseURI).href.replace(/\/$/, '');
       window.__VB_THEME_BASE = vb;
       window.__VB_CATALOG_BASE = vb;
       document.documentElement.dataset.iconPath = vb + '/icons';
