@@ -31,36 +31,42 @@ test('demos.html embeds all five standalone demos in browser-window frames', asy
 
 test('demos.html uses <code-block> for source (no raw pre/code)', async ({ page }) => {
   await page.goto('/docs/demos.html', { waitUntil: 'domcontentloaded' });
+  // code-block is loaded via bundled docs-entry.js, not a CDN <script src>.
+  // Wait for custom element upgrade so querySelectorAll returns live elements.
+  await page.waitForFunction(() => customElements.get('code-block') !== undefined);
   const counts = await page.evaluate(() => ({
     codeBlocks: document.querySelectorAll('code-block').length,
     rawPre: document.querySelectorAll('pre').length,
-    hasImport: !!document.querySelector('script[src*="@profpowell/code-block"]'),
+    // Bundled: no explicit <script src="@profpowell/code-block"> tag needed.
+    elementDefined: !!customElements.get('code-block'),
   }));
   expect(counts.codeBlocks).toBeGreaterThanOrEqual(12);
   expect(counts.rawPre).toBe(0);
-  expect(counts.hasImport).toBe(true);
+  expect(counts.elementDefined).toBe(true);
 });
 
 test('index.html uses <code-block> for source (no raw pre/code)', async ({ page }) => {
   await page.goto('/docs/index.html', { waitUntil: 'domcontentloaded' });
+  await page.waitForFunction(() => customElements.get('code-block') !== undefined);
   const c = await page.evaluate(() => ({
     codeBlocks: document.querySelectorAll('code-block').length,
     rawPre: document.querySelectorAll('pre').length,
-    hasImport: !!document.querySelector('script[src*="@profpowell/code-block"]'),
+    elementDefined: !!customElements.get('code-block'),
   }));
   expect(c.codeBlocks).toBeGreaterThanOrEqual(3);
   expect(c.rawPre).toBe(0);
-  expect(c.hasImport).toBe(true);
+  expect(c.elementDefined).toBe(true);
 });
 
 test('api.html uses <code-block> for source (no raw pre/code)', async ({ page }) => {
   await page.goto('/docs/api.html', { waitUntil: 'domcontentloaded' });
+  await page.waitForFunction(() => customElements.get('code-block') !== undefined);
   const c = await page.evaluate(() => ({
     codeBlocks: document.querySelectorAll('code-block').length,
     rawPre: document.querySelectorAll('pre').length,
-    hasImport: !!document.querySelector('script[src*="@profpowell/code-block"]'),
+    elementDefined: !!customElements.get('code-block'),
   }));
   expect(c.codeBlocks).toBeGreaterThanOrEqual(5);
   expect(c.rawPre).toBe(0);
-  expect(c.hasImport).toBe(true);
+  expect(c.elementDefined).toBe(true);
 });

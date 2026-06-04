@@ -1,36 +1,47 @@
 import { test, expect } from '@playwright/test';
 
-// Pages should use full vanilla-breeze (CSS + JS), a <theme-picker> for theme/
-// dark switching, zero bespoke classes, and no hand-rolled styles.css.
+// VB is bundled via docs-entry.js — no CDN <link> or <script[src]> for it.
+// After docs-entry.js runs, VB applies the "classic" theme (seeded in localStorage
+// by the inline <script> in each page's <head>), so the body gets Classic serif fonts.
 async function audit(page, url) {
   await page.goto(url, { waitUntil: 'domcontentloaded' });
+
+  // Give VB a moment to initialise and apply the classic theme CSS.
+  await page.waitForFunction(
+    () => {
+      const ff = getComputedStyle(document.body).fontFamily.toLowerCase();
+      return ff.includes('charter') || ff.includes('georgia');
+    },
+    { timeout: 5000 }
+  ).catch(() => {
+    // If the font hasn't changed it will be caught by the assertion below.
+  });
+
   return page.evaluate(() => ({
-    vbCss: !!document.querySelector('link[href*="vanilla-breeze.css"]'),
-    vbJs: !!document.querySelector('script[src*="vanilla-breeze.js"]'),
+    dataTheme: document.documentElement.getAttribute('data-theme'),
     themePicker: !!document.querySelector('theme-picker'),
     oldStyles: !!document.querySelector('link[href="./styles.css"]'),
     removedClasses: ['demo-section', 'site-header', 'nav-links', 'canvas-text-frame', 'api-table', 'theme-toggle']
       .filter((c) => document.querySelector('.' + c)),
+    fontFamily: getComputedStyle(document.body).fontFamily.toLowerCase(),
   }));
 }
 
-test('index.html uses full vanilla-breeze (css+js, theme-picker, no styles.css/classes)', async ({ page }) => {
-  const a = await audit(page, '/docs/index.html');
-  expect(a.vbCss).toBe(true);
-  expect(a.vbJs).toBe(true);
-  expect(a.themePicker).toBe(true);
-  expect(a.oldStyles).toBe(false);
-  expect(a.removedClasses).toEqual([]);
-});
-
-test('index.html is actually styled by vanilla-breeze (not bare UA defaults)', async ({ page }) => {
-  await page.goto('/docs/index.html', { waitUntil: 'domcontentloaded' });
-  const styled = await page.evaluate(() => {
-    const ff = getComputedStyle(document.body).fontFamily.toLowerCase();
-    return ff.length > 0 && ff !== 'serif' && ff !== 'times new roman' && ff !== 'times';
+for (const path of ['/docs/index.html', '/docs/demos.html', '/docs/api.html']) {
+  test(`${path} — data-theme="classic", theme-picker present, no old classes/styles`, async ({ page }) => {
+    const a = await audit(page, path);
+    expect(a.dataTheme).toBe('classic');
+    expect(a.themePicker).toBe(true);
+    expect(a.oldStyles).toBe(false);
+    expect(a.removedClasses).toEqual([]);
   });
-  expect(styled).toBe(true);
-});
+
+  test(`${path} — styled by VB classic (charter or georgia font)`, async ({ page }) => {
+    const a = await audit(page, path);
+    const styledByVb = a.fontFamily.includes('charter') || a.fontFamily.includes('georgia');
+    expect(styledByVb).toBe(true);
+  });
+}
 
 test('index hero canvas-text still renders', async ({ page }) => {
   await page.goto('/docs/index.html', { waitUntil: 'domcontentloaded' });
