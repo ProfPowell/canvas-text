@@ -27,20 +27,17 @@ jobs:
 
       - run: npm ci
 
-      - name: Build library
-        run: npm run build
+      - name: Build site (bundles vanilla-breeze + components)
+        run: npm run site:build
 
-      - name: Assemble site
-        run: |
-          mkdir -p _site
-          cp -rL docs/* _site/
-          cp README.md _site/
+      - name: Add root redirect to /docs
+        run: printf '%s' '<!doctype html><meta charset="utf-8"><meta http-equiv="refresh" content="0; url=./docs/index.html"><link rel="canonical" href="./docs/index.html"><title>canvas-text</title><a href="./docs/index.html">canvas-text documentation</a>' > dist-site/index.html
 
       - uses: actions/configure-pages@v6
 
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: '_site'
+          path: 'dist-site'
 
   deploy:
     environment:
